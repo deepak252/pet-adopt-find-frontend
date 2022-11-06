@@ -1,3 +1,4 @@
+import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -14,9 +15,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Adopt Us',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: Themes.lightTheme,
       home: SplashScreen(),
     );
   }

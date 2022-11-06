@@ -1,3 +1,4 @@
+import 'package:adopt_us/screens/dashboard.dart';
 import 'package:adopt_us/screens/home_screen.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,8 @@ class _SplashScreenState extends State<SplashScreen> {
         if(isLoading){
           return _splash;
         }
-        return const HomeScreen();
+        return const Dashboard();
+        // return const HomeScreen();
       }
     );
   }
