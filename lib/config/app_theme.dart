@@ -5,11 +5,19 @@ abstract class Themes{
   static const ffamily2="Lato";
   
   static const colorPrimary=Color.fromARGB(255, 66, 35, 131);
+  static const colorSecondary=Color.fromARGB(255, 255, 165, 62);
   static const colorBlack=Color.fromARGB(255, 32, 32, 32);
+  static const backgroundColor=Color.fromARGB(255, 238, 238, 238);
   static const _textTheme = TextTheme(
+    bodyText2: TextStyle( //Text widget,
+      fontSize : 16
+    ),
     subtitle1:  TextStyle(  //TextField text/hint text,
       fontFamily: ffamily2,
     ),
+  );
+  static final _iconTheme =  IconThemeData(
+    color: colorBlack.withOpacity(0.8),
   );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
@@ -17,6 +25,20 @@ abstract class Themes{
 
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      titleTextStyle: TextStyle(
+        color: colorBlack,
+        fontWeight: FontWeight.w600,
+        fontFamily: ffamily1,
+        fontSize: 18
+      ),
+      iconTheme: IconThemeData(
+        color: colorBlack,
+        size: 22
+      )
+    ),
     colorScheme: ThemeData.light().colorScheme.copyWith(
       primary: colorPrimary, //appbar
       secondary: colorPrimary,
@@ -26,13 +48,61 @@ abstract class Themes{
       buttonColor: colorPrimary,
       disabledColor: Colors.grey,
     ),
-    inputDecorationTheme: const InputDecorationTheme(
+
+    inputDecorationTheme: InputDecorationTheme(
       hintStyle: TextStyle(
-        fontFamily: ffamily2
-      )
-    ),    
+        fontFamily: ffamily2,
+        color: colorBlack.withOpacity(0.5)
+      ),
+      fillColor: Colors.white,
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.transparent, 
+          width: 1.0
+        ),
+        borderRadius: BorderRadius.circular(8)
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.transparent, 
+          width: 1.0
+        ),
+        borderRadius: BorderRadius.circular(8)
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Themes.colorSecondary, 
+          width: 1.0,
+        ),
+        borderRadius: BorderRadius.circular(8)
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.red,
+        ),
+        borderRadius: BorderRadius.circular(8)
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+          color: Colors.red,
+        ),
+        borderRadius: BorderRadius.circular(8)
+      ),
+      errorStyle: TextStyle(
+        color: Colors.red[400],
+        fontSize: 13,
+      ),
+      labelStyle: const TextStyle(
+        color: Themes.colorSecondary, 
+      ),
+      errorMaxLines: 4,
+    ),   
+    iconTheme: _iconTheme,
     textTheme: _textTheme,
     fontFamily: ffamily1,
+    listTileTheme: ListTileThemeData(
+      iconColor: colorBlack.withOpacity(0.9),
+    )
     
   );
 }

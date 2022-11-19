@@ -24,8 +24,6 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         leading: IconButton(
           icon: Image.asset(
             ImagePath.menu,
@@ -39,8 +37,8 @@ class _DashboardState extends State<Dashboard> {
         title: const Text(
           "Adopt Us",
           style: TextStyle(
-            color: Themes.colorBlack,
-            fontWeight: FontWeight.w600
+            fontWeight: FontWeight.w600,
+            fontSize: 20
           ),
         ),
       ),
