@@ -4,10 +4,10 @@ abstract class Themes{
   static const ffamily1="Poppins";
   static const ffamily2="Lato";
   
-  static const colorPrimary=Color.fromARGB(255, 66, 35, 131);
-  static const colorSecondary=Color.fromARGB(255, 255, 165, 62);
-  static const colorBlack=Color.fromARGB(255, 32, 32, 32);
-  static const backgroundColor=Color.fromARGB(255, 238, 238, 238);
+  static const colorPrimary=Color(0xFF422383);
+    static const colorSecondary=Color(0xFFFFA53E);
+  static const colorBlack=Color(0xFF202020);
+  static const backgroundColor=Color(0xFFEEEEEE);
   static const _textTheme = TextTheme(
     bodyText2: TextStyle( //Text widget,
       fontSize : 16

@@ -27,6 +27,14 @@ class AppDrawer extends StatelessWidget {
             ),
             _DrawerTile(
               onTap: (){
+                
+              }, 
+              icon: Icons.favorite_border_outlined, 
+              title: "Favorites",
+              isSelected: false,
+            ),
+            _DrawerTile(
+              onTap: (){
                 Navigator.pop(context);
               }, 
               icon: Icons.search,
