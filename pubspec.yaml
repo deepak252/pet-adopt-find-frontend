@@ -44,6 +44,11 @@ dependencies:
   intl: ^0.17.0
   intl_phone_field: ^3.1.0
 
+  firebase_core: ^2.4.0
+  firebase_messaging: ^14.1.4
+  firebase_storage: ^11.0.7
+  firebase_auth: ^4.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
