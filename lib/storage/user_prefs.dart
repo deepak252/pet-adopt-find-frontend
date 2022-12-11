@@ -10,9 +10,7 @@ class UserPrefs {
   static const String _profileKey = 'profile';
   static const String _firstStartKey = 'firstStart';
 
-  static String? getToken() {
-    return _getStorage.read(_tokenKey);
-  }
+  static String? get token =>   _getStorage.read(_tokenKey); 
 
   static Future setToken({required String value})async{
     await _getStorage.write(_tokenKey, value);
@@ -41,10 +39,8 @@ class UserPrefs {
     
   // }
 
-  static bool isFirstStart() {
-    return _getStorage.read(_firstStartKey)??true;
-  }
-
+  static bool get isFirstStart=>  _getStorage.read(_firstStartKey)??true;
+  
   static Future setFirstStart({required bool value})async{
     await _getStorage.write(_firstStartKey, value);
     _debug.message("setFirstStart", value);

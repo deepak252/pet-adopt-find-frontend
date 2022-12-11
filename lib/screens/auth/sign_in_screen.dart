@@ -1,5 +1,10 @@
+import 'dart:developer';
+
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/screens/auth/sign_up_screen.dart';
+import 'package:adopt_us/screens/splash_screen.dart';
+import 'package:adopt_us/services/auth_service.dart';
+import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
@@ -54,6 +59,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller: _emailController,
                     hintText: " Email",
                     validator: TextValidator.validateEmail,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 18,),
                   CustomTextField(
@@ -81,8 +87,19 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   const SizedBox(height: 36,),
                   CustomElevatedButton(
-                    onPressed: (){
-
+                    onPressed: ()async{
+                      if(!_formkey.currentState!.validate()){
+                        return;
+                      }
+                      final token = await AuthService.signIn(
+                        email: _emailController.text, 
+                        password: _passwordController.text
+                      );
+                      if(token!=null){
+                        //Sign In Successfull
+                        await UserPrefs.setToken(value: token);
+                        Get.offAll(()=>SplashScreen());
+                      }
                     },
                     text: "Sign In",
                   ),

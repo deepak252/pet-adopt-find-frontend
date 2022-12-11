@@ -15,14 +15,13 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
-      
       body : GridView.builder(
         itemCount: 10,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
           childAspectRatio: 0.8
         ),
-        itemBuilder: (BuildContext context, int index) {
+        itemBuilder: (BuildContext context, int index){
           return PetWidget(
             pet: _pet,
           );

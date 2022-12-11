@@ -1,4 +1,7 @@
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/screens/splash_screen.dart';
+import 'package:adopt_us/services/auth_service.dart';
+import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
@@ -18,6 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formkey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _cfPasswordController = TextEditingController();
 
@@ -25,6 +29,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
+    _cfPasswordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -61,6 +68,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     controller: _emailController,
                     hintText: " Email",
                     validator: TextValidator.validateEmail,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 18,),
+                  CustomTextField(
+                    controller: _phoneController,
+                    hintText: " Phone",
+                    validator: TextValidator.validatePhoneNumber,
+                    keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 18,),
                   CustomTextField(
@@ -72,15 +87,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CustomTextField(
                     controller: _cfPasswordController,
                     hintText: " Confirm Password",
-                    validator:(confirmPassword)=> TextValidator.validateConfirmPassword(
+                    validator: (confirmPassword)=> TextValidator.validateConfirmPassword(
                       confirmPassword, _passwordController.text
                     ),
                   ),
                   
                   const SizedBox(height: 36,),
                   CustomElevatedButton(
-                    onPressed: (){
-
+                    onPressed: ()async{
+                      if(!_formkey.currentState!.validate()){
+                        return;
+                      }
+                      final token = await AuthService.signUp(
+                        name: _nameController.text, 
+                        email: _emailController.text, 
+                        phone: _phoneController.text, 
+                        password: _passwordController.text
+                      );
+                      if(token!=null){
+                        //Sign Up Successfull
+                        await UserPrefs.setToken(value: token);
+                        Get.offAll(()=>SplashScreen());
+                      }
                     },
                     text: "Sign Up",
                   ),
