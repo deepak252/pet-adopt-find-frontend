@@ -23,7 +23,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    UserService.getProfile(token: UserPrefs.token??'');
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(

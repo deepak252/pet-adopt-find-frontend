@@ -6,7 +6,7 @@ import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
-typedef SuccessCallback<T> = Future<T>? Function(dynamic);
+typedef SuccessCallback<T> = Future<T?> Function(dynamic);
 
 abstract class HttpUtils{
   //Return token on successful SignIn
@@ -41,9 +41,10 @@ abstract class HttpUtils{
       }
     }catch(e,s){
       debug.error(methodName, error: e,stackTrace: s);
-      if(e is String){
-        CustomSnackbar.error(error: jsonDecode(e)['error']);
-      }else{
+      try{
+        final error =  jsonDecode(e.toString())['error'];
+        CustomSnackbar.error(error: error);
+      }catch(e2){
         CustomSnackbar.error(error: "Something went wrong!");
       }
     }
@@ -79,9 +80,10 @@ abstract class HttpUtils{
       }
     }catch(e,s){
       debug.error(methodName, error: e,stackTrace: s);
-      if(e is String){
-        CustomSnackbar.error(error: jsonDecode(e)['error']);
-      }else{
+      try{
+        final error =  jsonDecode(e.toString())['error'];
+        CustomSnackbar.error(error: error);
+      }catch(e2){
         CustomSnackbar.error(error: "Something went wrong!");
       }
     }

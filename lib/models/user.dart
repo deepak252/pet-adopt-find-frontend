@@ -1,20 +1,20 @@
 class User {
-  final String id;
+  final int userId;
   String? token;
-  String? name;
+  String? fullName;
   String? email;
-  String? phone;
+  String? mobile;
   String? profilePic;
   String? fcmToken;
   DateTime? createdAt;
   DateTime? updatedAt;
   
   User({
-    required this.id,
+    required this.userId,
     this.token,
-    this.name,
+    this.fullName,
     this.email,
-    this.phone,
+    this.mobile,
     this.profilePic,
     this.fcmToken,
     this.createdAt,
@@ -22,46 +22,46 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json["_id"],
+    userId: json["userId"],
     token: json["token"],
-    name: json["name"],
+    fullName: json["fullName"],
     email: json["email"],
-    phone: json["phone"],
+    mobile: json["mobile"],
     profilePic: json["profilePic"],
-    fcmToken: json["fcmToken"],
+    fcmToken: json["fcmId"],
     createdAt: DateTime.tryParse(json["createdAt"]??''),
     updatedAt: DateTime.tryParse(json["updatedAt"]??''),
   );
 
   Map<String, dynamic> toJson() => {
-    "_id": id,
+    "userId": userId,
     "token": token,
-    "name": name,
+    "fullName": fullName,
     "email": email,
-    "phone": phone,
+    "mobile": mobile,
     "profilePic": profilePic,
-    "fcmToken": fcmToken,
+    "fcmId": fcmToken,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
   };
 
   User copyWith({
-    String? id,
+    int? userId,
     String? token,
-    String? name,
+    String? fullName,
     String? email,
-    String? phone,
+    String? mobile,
     String? profilePic,
     String? fcmToken,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return User(
-      id: id ?? this.id,
+      userId: userId ?? this.userId,
       token: token ?? this.token,
-      name: name ?? this.name,
+      fullName: fullName ?? this.fullName,
       email: email ?? this.email,
-      phone: phone ?? this.phone,
+      mobile: mobile ?? this.mobile,
       profilePic: profilePic ?? this.profilePic,
       fcmToken: fcmToken ?? this.fcmToken,
       createdAt: createdAt ?? this.createdAt,

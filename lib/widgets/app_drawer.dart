@@ -1,6 +1,8 @@
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/sign_in_screen.dart';
+import 'package:adopt_us/screens/splash_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,61 +11,75 @@ import 'package:get/get.dart';
 class AppDrawer extends StatelessWidget {
   AppDrawer({ Key? key, }) : super(key: key);
   final _bottomNavController = Get.put(BottomNavController());
+  final _userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: SafeArea(
-        child: ListView(
-          children: [
-            SizedBox(height: 100,),
-            _DrawerTile(
-              onTap: (){
-                Navigator.pop(context);
-              }, 
-              icon: Icons.home_outlined, 
-              title: "Home",
-              isSelected: true,
-            ),
-            _DrawerTile(
-              onTap: (){
-                
-              }, 
-              icon: Icons.favorite_border_outlined, 
-              title: "Favorites",
-              isSelected: false,
-            ),
-            _DrawerTile(
-              onTap: (){
-                Navigator.pop(context);
-              }, 
-              icon: Icons.search,
-              title: "Find Pet",
-            ),
-            const Divider(thickness: 2,),
-            _DrawerTile(
-              onTap: ()async{
-                Navigator.pop(context);
-                Get.to(()=>const SignInScreen());
-              }, 
-              icon: Icons.login,
-              title: "Sign In",
-            ),
-            _DrawerTile(
-              onTap: (){
-                Navigator.pop(context);
-              }, 
-              icon: Icons.info_outlined,
-              title: "About Us",
-            ),
-            _DrawerTile(
-              onTap: (){}, 
-              icon: Icons.support_agent_outlined,
-              title: "Help & Support",
-            ),
-            
-          ],
-        ),
+        child: Obx((){
+          return ListView(
+            children: [
+              const SizedBox(height: 100,),
+              _DrawerTile(
+                onTap: (){
+                  Navigator.pop(context);
+                }, 
+                icon: Icons.home_outlined, 
+                title: "Home",
+                isSelected: true,
+              ),
+              _DrawerTile(
+                onTap: (){
+                  
+                }, 
+                icon: Icons.favorite_border_outlined, 
+                title: "Favorites",
+                isSelected: false,
+              ),
+              _DrawerTile(
+                onTap: (){
+                  Navigator.pop(context);
+                }, 
+                icon: Icons.search,
+                title: "Find Pet",
+              ),
+              const Divider(thickness: 2,),
+              !_userController.isSignedIn
+              ? _DrawerTile(
+                  onTap: ()async{
+                    Navigator.pop(context);
+                    Get.to(()=>const SignInScreen());
+                  }, 
+                  icon: Icons.login,
+                  title: "Sign In",
+                )
+              : _DrawerTile(
+                  onTap: ()async{
+                    await _userController.logOut();
+                    Get.offAll(()=>const SplashScreen());
+                    
+                  }, 
+                  icon: Icons.logout,
+                  title: "Sign Out",
+                ),
+              _DrawerTile(
+                onTap: (){
+                  Navigator.pop(context);
+                }, 
+                icon: Icons.info_outlined,
+                title: "About Us",
+              ),
+              _DrawerTile(
+                onTap: (){}, 
+                icon: Icons.support_agent_outlined,
+                title: "Help & Support",
+              ),
+              
+            ],
+          );  
+        })
+        
       ),
     );
   }
