@@ -17,7 +17,7 @@ abstract class HttpUtils{
     required SuccessCallback<T> onSuccess,
     VoidCallback? onError,
     String? token,
-    Map<String,String>? payload,
+    Map<String,dynamic>? payload,
 
   }) async {
     try{

@@ -39,6 +39,7 @@ class AppDrawer extends StatelessWidget {
               ),
               _DrawerTile(
                 onTap: (){
+                  _bottomNavController.changeRoute(index: 1);
                   Navigator.pop(context);
                 }, 
                 icon: Icons.search,

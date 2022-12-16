@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({ Key? key }) : super(key: key);
   final _pet = Pet(
-    name: "Shinti",
+    petId: 1,
+    userId: 1,
+    petName: "Shinti",
     age: 1,
-    pic: "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313__340.jpg",
-    address: "New Delhi"
+    photos: "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313__340.jpg",
+    addressLine: "New Delhi"
   );
 
   @override

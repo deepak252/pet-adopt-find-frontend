@@ -5,7 +5,7 @@ abstract class Themes{
   static const ffamily2="Lato";
   
   static const colorPrimary=Color(0xFF422383);
-    static const colorSecondary=Color(0xFFFFA53E);
+  static const colorSecondary=Color(0xFFFFA53E);
   static const colorBlack=Color(0xFF202020);
   static const backgroundColor=Color(0xFFEEEEEE);
   static const _textTheme = TextTheme(

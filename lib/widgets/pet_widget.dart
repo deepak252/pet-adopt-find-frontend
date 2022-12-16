@@ -20,7 +20,7 @@ class PetWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: CachedImageContainer(
-                  imgUrl: pet.pic!,
+                  imgUrl: pet.photos!,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     topRight:  Radius.circular(4),
@@ -35,7 +35,7 @@ class PetWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      pet.name!,
+                      pet.petName!,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold
                       ),
@@ -50,7 +50,7 @@ class PetWidget extends StatelessWidget {
                       children: [
                         const Icon(Icons.location_pin,size: 16,),
                         Text(
-                          "${pet.address}",
+                          "${pet.addressLine}",
                           style: const TextStyle(
                             fontSize: 13
                           ),

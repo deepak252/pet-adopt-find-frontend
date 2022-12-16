@@ -1,23 +1,22 @@
-import 'dart:developer';
 
 import 'package:adopt_us/config/api_path.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/utils/debug_utils.dart';
 import 'package:adopt_us/utils/http_utils.dart';
 
-abstract class UserService{
-  static final _debug = DebugUtils("UserService");
+abstract class PetService{
+  static final _debug = DebugUtils("PetService");
  
-  static Future<User?> getProfile({
+  static Future getAllPets({
     required String token
   }) async {
     return await HttpUtils.get(
-      methodName: "getProfile", 
+      methodName: "getAllPets", 
       token: token,
-      api: ApiPath.getProfile,
+      api: ApiPath.getAllPets,
       onSuccess: (res)async{
         if(res?['data']!=null){
-          return User.fromJson(res['data']);
+          // return User.fromJson(res['data']);
         }
         return null;
       },

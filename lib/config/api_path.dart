@@ -10,4 +10,7 @@ abstract class ApiPath{
   static const String getProfile = "$_baseUrl/user/getProfile";
   static const String updateProfile = "$_baseUrl/user/updateProfile";
 
+  static const String getAllPets = "$_baseUrl/pet/getAllPets";
+  static const String createPet = "$_baseUrl/pet/createPost";
+
 }

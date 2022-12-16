@@ -23,8 +23,8 @@ class UserController extends GetxController{
   }
 
   Future fetchProfile({bool enableLoading = false})async{
-    log("TOKEN1 : $_token");
-    log("TOKEN2 : ${UserPrefs.token}");
+    // log("TOKEN1 : $_token");
+    // log("TOKEN2 : ${UserPrefs.token}");
     if(isLoading || _token==null){
       return;
     }
