@@ -3,6 +3,7 @@ import 'package:adopt_us/config/image_path.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/screens/find_screen.dart';
 import 'package:adopt_us/screens/home_screen.dart';
+import 'package:adopt_us/screens/notification_screen.dart';
 import 'package:adopt_us/screens/profile_screen.dart';
 import 'package:adopt_us/services/user_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
@@ -43,6 +44,48 @@ class _DashboardState extends State<Dashboard> {
             fontSize: 20
           ),
         ),
+        actions: [
+          Obx((){
+            switch(_bottomNavController.currentIndex){
+              case 0 : {
+                return SizedBox(
+                  height: 50,width: 50,
+                  child: RawMaterialButton(
+                    shape: const CircleBorder(),
+                    onPressed: (){
+                      Get.to(()=> NotificationScreen());
+                    }, 
+                    child: const Icon(Icons.notifications_on_rounded)
+                  ),
+                );
+              }
+              case 1 : {
+                return SizedBox(
+                  height: 50,width: 50,
+                  child: RawMaterialButton(
+                    shape: const CircleBorder(),
+                    onPressed: (){
+                      
+                    }, 
+                    child: const Icon(Icons.filter_list,),
+                  ),
+                );
+              }
+            }
+            // if(_bottomNavController.currentIndex==1){
+            //   return SizedBox(
+            //     height: 50,width: 50,
+            //     child: RawMaterialButton(
+            //       shape: const CircleBorder(),
+            //       onPressed: (){
+            //       }, 
+            //       child: const Icon(Icons.filter_list,),
+            //     ),
+            //   );
+            // }
+            return const SizedBox();
+          }),
+        ]
       ),
       drawer: AppDrawer(),
 

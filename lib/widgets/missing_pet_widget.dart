@@ -5,9 +5,9 @@ import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PetWidget extends StatelessWidget {
+class MissingPetWidget extends StatelessWidget {
   final Pet pet;
-  const PetWidget({ Key? key, required this.pet}) : super(key: key);
+  const MissingPetWidget({ Key? key, required this.pet}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -16,43 +16,39 @@ class PetWidget extends StatelessWidget {
           pet: pet,
         ));
       },
-      child: Stack(
-        alignment: Alignment.topRight,
-        children: [
-          Card(
-            shadowColor: Themes.colorSecondary,
-            elevation: 2,
-            child: Column(
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 2),
+
+        child: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
+                Flexible(
+                  flex: 2,
                   child: CachedImageContainer(
                     imgUrl: pet.photos!,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight:  Radius.circular(4),
-                    ),
+                    borderRadius: BorderRadius.circular(8),
                     width: double.infinity,
-                    height: 190,
+                    height: 150,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(12),
+                const SizedBox(width: 10,),
+                Flexible(
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         pet.petName!,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18
                         ),
                       ),
-                      Text(
-                        "Age : ${pet.age!} year",
-                        style: const TextStyle(
-                          fontSize: 13
-                        ),
-                      ),
+                      const SizedBox(height: 8,),
                       Row(
                         children: [
                           const Icon(Icons.location_pin,size: 16,),
@@ -66,26 +62,11 @@ class PetWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
-
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: (){
-              
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Card(
-                child: Icon(
-                  Icons.favorite_outline_outlined,
-                  color: Themes.colorSecondary,
                 ),
-              ),
-            ),
-          ),
-        ],
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
