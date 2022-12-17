@@ -1,3 +1,4 @@
+import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
@@ -21,16 +22,71 @@ class FindScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body : ListView.separated(
-        itemCount: 10,
-        separatorBuilder: (BuildContext context, int index){
-          return Divider();
-        },
-        itemBuilder: (BuildContext context, int index){
-          return MissingPetWidget(
-            pet: _pet,
-          );
-        },
+      body : DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            const TabBar(
+              labelPadding: EdgeInsets.symmetric(vertical: 12),
+              indicatorColor: Themes.colorPrimary,
+              unselectedLabelStyle: TextStyle(
+                color: Themes.colorBlack,
+                fontSize: 14,
+                fontFamily: Themes.ffamily1
+              ),
+              labelStyle: TextStyle(
+                color: Themes.colorBlack,
+                fontSize: 16,
+                fontFamily: Themes.ffamily1
+              ),
+              tabs: [
+                Text(
+                  "Missing",
+                  style: TextStyle(
+                    color: Themes.colorBlack,
+                    // fontSize: 16
+                    
+                  ),
+                ),
+                Text(
+                  "Abondoned",
+                  style: TextStyle(
+                    color: Themes.colorBlack,
+                    // fontSize: 16
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  ListView.separated(
+                    itemCount: 10,
+                    separatorBuilder: (BuildContext context, int index){
+                      return Divider();
+                    },
+                    itemBuilder: (BuildContext context, int index){
+                      return MissingPetWidget(
+                        pet: _pet,
+                      );
+                    },
+                  ),
+                  ListView.separated(
+                    itemCount: 10,
+                    separatorBuilder: (BuildContext context, int index){
+                      return Divider();
+                    },
+                    itemBuilder: (BuildContext context, int index){
+                      return MissingPetWidget(
+                        pet: _pet,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: ()async {
