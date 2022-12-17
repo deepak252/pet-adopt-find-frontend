@@ -28,7 +28,10 @@ class FileUtils {
   static Future<File?> pickImageFromGallery() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image != null) return File(image.path);
+      if (image != null){
+        log("${image.name}");
+        return File(image.path);
+      }
     } catch (e,s) {
       _debug.error("pickImageFromGallery",error: e,stackTrace: s);
     }

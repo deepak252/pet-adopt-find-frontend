@@ -19,6 +19,7 @@ class CustomTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputAction? textInputAction;
   final bool? filled;
+  final int? maxLength;
   const CustomTextField({ 
     Key? key,
     this.controller,
@@ -35,6 +36,7 @@ class CustomTextField extends StatelessWidget {
     this.textColor,
     this.inputFormatters,
     this.textInputAction,
+    this.maxLength,
     this.filled=true
     
   }) : super(key: key);
@@ -50,7 +52,8 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       maxLines: maxLines,
-      
+      maxLength: maxLength,
+      textAlignVertical: TextAlignVertical.top,
       style: TextStyle(
         color: textColor??Themes.colorBlack,
       ),
@@ -94,10 +97,10 @@ class CustomTextField extends StatelessWidget {
         //   borderRadius: BorderRadius.circular(8)
         // ),
         
-        
         errorMaxLines: 4,
         fillColor: fillColor,
         filled: filled,
+        alignLabelWithHint: true,
       ),
       
     );

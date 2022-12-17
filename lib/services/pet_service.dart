@@ -24,14 +24,14 @@ abstract class PetService{
     );
   }
 
-  static Future<User?> updateProfile({
+  static Future<User?> create({
     required String token,
     required Map<String,dynamic> data
   }) async {
     return await HttpUtils.post(
-      methodName: "updateProfile", 
+      methodName: "createPet", 
       token: token,
-      api: ApiPath.getProfile,
+      api: ApiPath.createPet,
       payload: data,
       onSuccess: (res)async{
         if(res?['data']!=null){

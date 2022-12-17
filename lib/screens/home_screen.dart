@@ -1,6 +1,8 @@
 import 'package:adopt_us/models/pet.dart';
+import 'package:adopt_us/screens/create_pet_screen.dart';
 import 'package:adopt_us/widgets/pet_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({ Key? key }) : super(key: key);
@@ -30,10 +32,8 @@ class HomeScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          
-        },
-        child: Icon(Icons.add),
+        onPressed: ()=>Get.to(()=>const CreatePetScreen()),
+        child: const Icon(Icons.add),
       ),
     );
   }

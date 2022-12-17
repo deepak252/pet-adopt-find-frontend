@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future initUser()async{
     _loading.value=true;
-    // await _userController.fetchProfile(enableLoading: true);
+    await _userController.fetchProfile(enableLoading: true);
     _loading.value=false;
   }
 
