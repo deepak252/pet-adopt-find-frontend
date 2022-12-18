@@ -1,4 +1,5 @@
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/models/address.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
@@ -12,11 +13,10 @@ class FindScreen extends StatelessWidget {
 
   final _pet = Pet(
     petId: 1,
-    userId: 1,
     petName: "Shinti",
-    age: 1,
-    photos: "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313__340.jpg",
-    addressLine: "New Delhi"
+    age: "1",
+    photos: ["https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313__340.jpg"],
+    address: Address(addressId: 1,addressLine : "new Delhi")
   );
 
   @override
@@ -91,7 +91,7 @@ class FindScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: ()async {
           await Get.bottomSheet(
-            _searchOptions(),
+            _uploadImage(),
             backgroundColor: Colors.white,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -106,7 +106,7 @@ class FindScreen extends StatelessWidget {
     );
   }
 
-  Widget _searchOptions(){
+  Widget _uploadImage(){
     return SizedBox(
       height: 300,
       child: Column(

@@ -1,29 +1,29 @@
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
+import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProfileScreen extends StatelessWidget {
-  ProfileScreen({ Key? key }) : super(key: key);
+class UserProfileScreen extends StatelessWidget {
+  UserProfileScreen({ Key? key }) : super(key: key);
 
   final _userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12
-          ),
-          child: Obx((){
-            if(!_userController.isSignedIn){
-              return Center(
-                child: Text("Not Signed In!"),
-              );
-            }
-            final user  = _userController.user!;
-            return Column(
+      body: Obx((){
+        if(!_userController.isSignedIn){
+          return const NotSignedIn();
+        }
+        final user  = _userController.user!;
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12
+            ),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 24,),
@@ -78,16 +78,19 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 optionWidget(
                   label: "Edit Profile",
-                  icon: Icons.edit
+                  icon: Icons.edit,
+                  onTap: (){
+                    Get.to(()=>EditUserProfileScreen());
+                  }
                 ),
                
                 
 
               ],
-            );
-          })
-        ),
-      ),
+            ),
+          ),
+        );
+      }),
     );
   }
 

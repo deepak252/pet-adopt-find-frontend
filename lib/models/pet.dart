@@ -1,97 +1,54 @@
-// To parse this JSON data, do
-//
-//     final pet = petFromJson(jsonString);
 
-import 'dart:convert';
-
-Pet petFromJson(String str) => Pet.fromJson(json.decode(str));
-
-String petToJson(Pet data) => json.encode(data.toJson());
+import 'package:adopt_us/models/address.dart';
+import 'package:adopt_us/models/user.dart';
 
 class Pet {
     Pet({
       required this.petId,
-      required this.userId,
-      this.addressId,
+      required this.photos,
+      // required this.userId,
+      this.user,
+      this.address,
       this.petName,
       this.breed,
       this.age,
-      this.photos,
       this.category,
       this.petStatus,
       this.createdAt,
-      this.fullName,
-      this.email,
-      this.password,
-      this.mobile,
-      this.profilePic,
-      this.adoptPetsId,
-      this.uploadPetsId,
-      this.favouritePetsId,
-      this.fcmId,
-      this.addressLine,
-      this.city,
-      this.state,
-      this.pincode,
-      this.coordinates,
     });
 
     int petId;
-    int userId;
-    int? addressId;
+    // int userId;
+    User? user;
+    Address? address;
+    // int? addressId;
     String? petName;
     String? breed;
-    int? age;
-    String? photos;
+    String? age;
+    List<String> photos;
     String? category;
     String? petStatus;
     String? createdAt;
-    String? fullName;
-    String? email;
-    String? password;
-    String? mobile;
-    String? profilePic;
-    dynamic adoptPetsId;
-    String? uploadPetsId;
-    dynamic favouritePetsId;
-    String? fcmId;
-    String? addressLine;
-    String? city;
-    String? state;
-    String? pincode;
-    String? coordinates;
+    
 
     factory Pet.fromJson(Map<String, dynamic> json) => Pet(
         petId: json["petId"],
-        userId: json["userId"],
-        addressId: json["addressId"],
+        // userId: json["userId"],
+        user: User.fromJson(json),
+        address: Address.fromJson(json),
         petName: json["petName"],
         breed: json["breed"],
         age: json["age"],
-        photos: json["photos"],
+        photos: json["photos"]!=null && json["photos"].trim()!=''
+        ? json["photos"]?.split(',')
+        : [],
         category: json["category"],
         petStatus: json["petStatus"],
         createdAt: json["createdAt"],
-        fullName: json["fullName"],
-        email: json["email"],
-        password: json["password"],
-        mobile: json["mobile"],
-        profilePic: json["profilePic"],
-        adoptPetsId: json["adoptPetsId"],
-        uploadPetsId: json["uploadPetsId"],
-        favouritePetsId: json["favouritePetsId"],
-        fcmId: json["fcmId"],
-        addressLine: json["addressLine"],
-        city: json["city"],
-        state: json["state"],
-        pincode: json["pincode"],
-        coordinates: json["coordinates"],
     );
 
     Map<String, dynamic> toJson() => {
         "petId": petId,
-        "userId": userId,
-        "addressId": addressId,
         "petName": petName,
         "breed": breed,
         "age": age,
@@ -99,19 +56,8 @@ class Pet {
         "category": category,
         "petStatus": petStatus,
         "createdAt": createdAt,
-        "fullName": fullName,
-        "email": email,
-        "password": password,
-        "mobile": mobile,
-        "profilePic": profilePic,
-        "adoptPetsId": adoptPetsId,
-        "uploadPetsId": uploadPetsId,
-        "favouritePetsId": favouritePetsId,
-        "fcmId": fcmId,
-        "addressLine": addressLine,
-        "city": city,
-        "state": state,
-        "pincode": pincode,
-        "coordinates": coordinates,
+        ...user?.toJson()??{},
+        ...address?.toJson()??{},
+
     };
 }

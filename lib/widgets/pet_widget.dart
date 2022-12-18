@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/pet_details_screen.dart';
@@ -27,7 +29,7 @@ class PetWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: CachedImageContainer(
-                    imgUrl: pet.photos!,
+                    imgUrl: pet.photos.first,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(4),
                       topRight:  Radius.circular(4),
@@ -57,7 +59,7 @@ class PetWidget extends StatelessWidget {
                         children: [
                           const Icon(Icons.location_pin,size: 16,),
                           Text(
-                            "${pet.addressLine}",
+                            "${pet.address?.addressLine}",
                             style: const TextStyle(
                               fontSize: 13
                             ),

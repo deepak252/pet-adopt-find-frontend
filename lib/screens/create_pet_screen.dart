@@ -2,17 +2,22 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/config/pet_categories.dart';
 import 'package:adopt_us/config/pet_status.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/custom_dropdown.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class CreatePetScreen extends StatefulWidget {
   const CreatePetScreen({ Key? key }) : super(key: key);
@@ -24,12 +29,15 @@ class CreatePetScreen extends StatefulWidget {
 class _CreatePetScreenState extends State<CreatePetScreen> {
   final _formKey = GlobalKey<FormState>();
   String _selectedStatus = PetStatus.adopt;
+  String _selectedCategory = PetCategory.dog;
 
   final _formkey = GlobalKey<FormState>();
   final _petNameController = TextEditingController();
   final _petAgeController = TextEditingController();
   final _petDescriptionController = TextEditingController();
   List<File> _petImages=[];
+  final _petController = Get.put(PetController());
+  final _userController = Get.put(UserController());
 
   
   @override
@@ -57,6 +65,8 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
           padding: const EdgeInsets.all(12.0),
           child: CustomElevatedButton(
             onPressed: ()async {
+              unfocus(context);
+              bool postCreated=false;
               if(!_formKey.currentState!.validate()){
                 log("Invalid form");
                 return;
@@ -64,9 +74,12 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               if(_petImages.isEmpty){
                 return CustomSnackbar.error(error: "Upload Pet Image");
               }
-
-              //Upload product images
-              var imageUrls = await Future.wait(
+              if(!_userController.isSignedIn){
+                return CustomSnackbar.error(error: "Not Signed In");
+              }
+              customLoadingIndicator(context: context);
+              //Upload pet images to firebase
+              var imgUrls = await Future.wait(
                 _petImages.map((img)async{
                   String? fileName = FileUtils.getFileNameFromPath(img.path);
                   if(fileName!=null){
@@ -78,7 +91,41 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                   }
                 })
               )..removeWhere((e) => e==null);
-              log("$imageUrls");
+              log("$imgUrls");
+              if(imgUrls.isNotEmpty){
+                postCreated = await _petController.createPet({
+                  "userId" : _userController.user!.userId,
+                  "petName" : _petNameController.text,
+                  "breed" : "normal",
+                  "age" : _petAgeController.text,
+                  "photos" : imgUrls,
+                  "petStatus" : _selectedStatus,
+                  "petInfo" : _petDescriptionController.text,
+                  "category" : _selectedCategory
+                  // "addressLine" : "B-54, Andheri East",
+                  // "city" : "Mumbai",
+                  // "state" : "Maharastra",
+                  // "pincode" : "232424",
+                  // "coordinates" : ["42424", "42424"] 
+                });
+              }
+              if(mounted){
+                Navigator.pop(context); //Dismiss loading indicator
+                if(postCreated){
+                  CustomSnackbar.message(msg: "Pet profile created successfully");
+                  Navigator.pop(context);
+                }else{
+                  //Operation unsuccessful
+                  // Delete pet images from firebase storage
+                  imgUrls.map((url)async{
+                    if(url!=null){
+                      FirebaseStorageService.deleteFile(
+                        fileUrl: url
+                      );
+                    }
+                  });
+                }
+              }
             },
             text: "Submit",
           ),
@@ -102,6 +149,15 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               value: _selectedStatus, 
               onChanged: (val){
                 _selectedStatus=val!;
+                setState(() {});
+              }
+            ),
+            CustomDropdown(
+              items: PetCategory.getList, 
+              value: _selectedCategory, 
+              onChanged: (val){
+                _selectedCategory=val!;
+                setState(() {});
               }
             ),
             if(_selectedStatus!=PetStatus.abondoned)
@@ -122,26 +178,31 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                       FilteringTextInputFormatter.digitsOnly
                     ],
                   ),
+                  const SizedBox(height: 18,),
+                  CustomTextField(
+                    controller: _petNameController,
+                    hintText: " Breed",
+                    validator: TextValidator.validateName,
+                  ),
                 ],
               ),
             const SizedBox(height: 18,),
             CustomTextField(
               controller: _petDescriptionController,
               hintText: " Description",
-              keyboardType: TextInputType.phone,
               maxLines: 7,
               maxLength: 250,
             ),
 
             const SizedBox(height: 8,),
-            Text(
-              "Pet Pics",
-              style: TextStyle(
-                color: Themes.colorBlack.withOpacity(0.8),
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 8,),
+            // Text(
+            //   "Pet Pics",
+            //   style: TextStyle(
+            //     color: Themes.colorBlack.withOpacity(0.8),
+            //     fontSize: 16,
+            //   ),
+            // ),
+            // const SizedBox(height: 8,),
             Align(
               alignment: Alignment.center,
               child: Wrap(
@@ -252,3 +313,5 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
     );
   }
 }
+
+// {"success":false,"error":"ER_DATA_TOO_LONG: Data too long for column 'photos' at row 1"}

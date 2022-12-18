@@ -7,7 +7,7 @@ abstract class Themes{
   static const colorPrimary=Color(0xFF422383);
   static const colorSecondary=Color(0xFFFFA53E);
   static const colorBlack=Color(0xFF202020);
-  static const backgroundColor=Color(0xFFEEEEEE);
+  static const backgroundColor=Color(0xFFF6F6F6);
   static const _textTheme = TextTheme(
     bodyText2: TextStyle( //Text widget,
       fontSize : 16

@@ -1,6 +1,6 @@
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
-import 'package:adopt_us/screens/splash_screen.dart';
+import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/utils/misc.dart';

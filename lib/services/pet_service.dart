@@ -1,22 +1,29 @@
 
+import 'dart:developer';
+
 import 'package:adopt_us/config/api_path.dart';
-import 'package:adopt_us/models/user.dart';
+import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/utils/debug_utils.dart';
 import 'package:adopt_us/utils/http_utils.dart';
 
 abstract class PetService{
   static final _debug = DebugUtils("PetService");
  
-  static Future getAllPets({
-    required String token
-  }) async {
+  static Future<List<Pet>?> getAllPets() async {
     return await HttpUtils.get(
       methodName: "getAllPets", 
-      token: token,
       api: ApiPath.getAllPets,
       onSuccess: (res)async{
         if(res?['data']!=null){
-          // return User.fromJson(res['data']);
+          List<Pet> pets = [];
+          for(var petJson in res?['data']){
+            try{
+              pets.add(Pet.fromJson(petJson));
+            }catch(e,s){
+              _debug.error("getAllPets (Invalid json pet)", error: e, stackTrace: s);
+            }
+          }
+          return pets;
         }
         return null;
       },
@@ -24,7 +31,7 @@ abstract class PetService{
     );
   }
 
-  static Future<User?> create({
+  static Future<bool?> createPet({
     required String token,
     required Map<String,dynamic> data
   }) async {
@@ -35,9 +42,8 @@ abstract class PetService{
       payload: data,
       onSuccess: (res)async{
         if(res?['data']!=null){
-          return User.fromJson(res['data']);
+          return true;
         }
-        return null;
       },
       debug: _debug,
     );

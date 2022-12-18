@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:adopt_us/config/app_theme.dart';
-import 'package:adopt_us/screens/splash_screen.dart';
+import 'package:adopt_us/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 

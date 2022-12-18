@@ -29,7 +29,7 @@ class MissingPetWidget extends StatelessWidget {
                 Flexible(
                   flex: 2,
                   child: CachedImageContainer(
-                    imgUrl: pet.photos!,
+                    imgUrl: pet.photos.first,
                     borderRadius: BorderRadius.circular(8),
                     width: double.infinity,
                     height: 150,
@@ -53,7 +53,7 @@ class MissingPetWidget extends StatelessWidget {
                         children: [
                           const Icon(Icons.location_pin,size: 16,),
                           Text(
-                            "${pet.addressLine}",
+                            "${pet.address?.addressLine}",
                             style: const TextStyle(
                               fontSize: 13
                             ),

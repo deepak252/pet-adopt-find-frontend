@@ -19,7 +19,7 @@ class PetDetailsScreen extends StatelessWidget {
           Expanded(
             flex: 1,
             child: CachedImageContainer(
-              imgUrl: pet.photos!,
+              imgUrl: pet.photos.first,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(4),
                 topRight:  Radius.circular(4),
@@ -76,7 +76,7 @@ class PetDetailsScreen extends StatelessWidget {
                       children: [
                         const Icon(Icons.location_pin,size: 16,),
                         Text(
-                          "${pet.addressLine}",
+                          "${pet.address?.addressLine}",
                           style: const TextStyle(
                             fontSize: 16
                           ),
@@ -115,7 +115,7 @@ class PetDetailsScreen extends StatelessWidget {
         child: CustomElevatedButton(
           onPressed: (){
           },
-          text: "Adopt Now",
+          text: "Request to Adopt",
         ),
       )
     );

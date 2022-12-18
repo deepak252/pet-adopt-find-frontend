@@ -4,7 +4,7 @@ import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/screens/find_screen.dart';
 import 'package:adopt_us/screens/home_screen.dart';
 import 'package:adopt_us/screens/notification_screen.dart';
-import 'package:adopt_us/screens/profile_screen.dart';
+import 'package:adopt_us/screens/profile/user_profile_screen.dart';
 import 'package:adopt_us/services/user_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/widgets/app_drawer.dart';
@@ -94,7 +94,7 @@ class _DashboardState extends State<Dashboard> {
         children: [
           HomeScreen(),
           FindScreen(),
-          ProfileScreen(),
+          UserProfileScreen(),
         ],
         onPageChanged: (index) {
           _bottomNavController.setIndex=index;
