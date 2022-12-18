@@ -35,6 +35,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
   final _petNameController = TextEditingController();
   final _petAgeController = TextEditingController();
   final _petDescriptionController = TextEditingController();
+  final _breedController = TextEditingController();
   List<File> _petImages=[];
   final _petController = Get.put(PetController());
   final _userController = Get.put(UserController());
@@ -45,6 +46,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
     _petNameController.dispose();
     _petAgeController.dispose();
     _petDescriptionController.dispose();
+    _breedController.dispose();
     super.dispose();
   }
 
@@ -96,7 +98,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 postCreated = await _petController.createPet({
                   "userId" : _userController.user!.userId,
                   "petName" : _petNameController.text,
-                  "breed" : "normal",
+                  "breed" : _breedController.text,
                   "age" : _petAgeController.text,
                   "photos" : imgUrls,
                   "petStatus" : _selectedStatus,
@@ -152,6 +154,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 setState(() {});
               }
             ),
+            const SizedBox(height: 18,),
             CustomDropdown(
               items: PetCategory.getList, 
               value: _selectedCategory, 
@@ -178,14 +181,14 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                       FilteringTextInputFormatter.digitsOnly
                     ],
                   ),
-                  const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _petNameController,
-                    hintText: " Breed",
-                    validator: TextValidator.validateName,
-                  ),
+                  
                 ],
               ),
+            const SizedBox(height: 18,),
+            CustomTextField(
+              controller: _breedController,
+              hintText: " Breed",
+            ),
             const SizedBox(height: 18,),
             CustomTextField(
               controller: _petDescriptionController,

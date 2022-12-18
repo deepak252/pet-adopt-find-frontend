@@ -10,6 +10,7 @@ class Pet {
       this.user,
       this.address,
       this.petName,
+      this.petInfo,
       this.breed,
       this.age,
       this.category,
@@ -24,6 +25,7 @@ class Pet {
     // int? addressId;
     String? petName;
     String? breed;
+    String? petInfo;
     String? age;
     List<String> photos;
     String? category;
@@ -42,6 +44,7 @@ class Pet {
         photos: json["photos"]!=null && json["photos"].trim()!=''
         ? json["photos"]?.split(',')
         : [],
+        petInfo: json["petInfo"],
         category: json["category"],
         petStatus: json["petStatus"],
         createdAt: json["createdAt"],
@@ -54,6 +57,7 @@ class Pet {
         "age": age,
         "photos": photos,
         "category": category,
+        "petInfo": petInfo,
         "petStatus": petStatus,
         "createdAt": createdAt,
         ...user?.toJson()??{},

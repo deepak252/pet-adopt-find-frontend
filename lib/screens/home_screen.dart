@@ -29,17 +29,22 @@ class HomeScreen extends StatelessWidget {
             child: Text("No Pets Found!"),
           );
         }
-        return GridView.builder(
-          itemCount: _petController.allPets.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-            childAspectRatio: 0.8
-          ),
-          itemBuilder: (BuildContext context, int index){
-            return PetWidget(
-              pet: _petController.allPets[index],
-            );
+        return RefreshIndicator(
+          onRefresh: ()async{
+            await _petController.fetchAllPets(enableLoading: true);
           },
+          child: GridView.builder(
+            itemCount: _petController.allPets.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+              childAspectRatio: 0.8
+            ),
+            itemBuilder: (BuildContext context, int index){
+              return PetWidget(
+                pet: _petController.allPets[index],
+              );
+            },
+          ),
         );
       }),
      

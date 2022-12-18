@@ -66,6 +66,13 @@ class PetDetailsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8,),
                     Text(
+                      "Breed : ${pet.breed}",
+                      style: const TextStyle(
+                        fontSize: 16
+                      ),
+                    ),
+                    const SizedBox(height: 6,),
+                    Text(
                       "Age : ${pet.age!} year",
                       style: const TextStyle(
                         fontSize: 16
@@ -94,7 +101,7 @@ class PetDetailsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 6,),
                     Text(
-                      "My pet animal is a dog, and I love to play with it. She is very intelligent and loves to sit in her favorite chair. I take my pet to the vet regularly so that I can get her to take crucial vaccines."*10,
+                      "${pet.petInfo}",
                       style: TextStyle(
                         fontSize: 14,
                         color: Themes.colorBlack.withOpacity(0.8),
