@@ -49,5 +49,27 @@ abstract class PetService{
     );
   }
 
+  static Future<List<Pet>?> getPetsByStatus({required String status}) async {
+    return await HttpUtils.get(
+      methodName: "getPetByStatus : $status", 
+      api: "${ApiPath.getPetByStatus}?status=$status",
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          List<Pet> pets = [];
+          for(var petJson in res?['data']){
+            try{
+              pets.add(Pet.fromJson(petJson));
+            }catch(e,s){
+              _debug.error("getPetsByStatus (Invalid json pet)", error: e, stackTrace: s);
+            }
+          }
+          return pets;
+        }
+        return null;
+      },
+      debug: _debug,
+    );
+  }
+
  
 }

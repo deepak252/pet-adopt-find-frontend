@@ -40,7 +40,7 @@ class CustomDropdown extends StatelessWidget {
             ),
           );
         }).toList(),
-        isExpanded: true,
+        // isExpanded: true,
         onChanged: onChanged,
         decoration: const InputDecoration(filled: true),
       )

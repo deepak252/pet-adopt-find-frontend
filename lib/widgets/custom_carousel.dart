@@ -12,16 +12,15 @@ class CustomCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("$urls");
     return Container(
       width: double.infinity,
       color: Colors.white,
       child: urls.isEmpty
-      ? SizedBox()
+      ? const SizedBox()
       : CarouselSlider(
          items: urls
           .map((imgUrl) =>CachedNetworkImage(
-            fit: BoxFit.fill,
+            fit: BoxFit.fitWidth,
             width: double.infinity,
             imageUrl: imgUrl,
             placeholder: (context, url) => const CustomShimmer(

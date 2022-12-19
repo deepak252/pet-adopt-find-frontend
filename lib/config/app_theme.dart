@@ -8,6 +8,24 @@ abstract class Themes{
   static const colorSecondary=Color(0xFFFFA53E);
   static const colorBlack=Color(0xFF202020);
   static const backgroundColor=Color(0xFFF6F6F6);
+
+  static MaterialColor materialColorSecondary = const MaterialColor(
+    0xFFFFA53E,
+    <int, Color>{
+      50: Color(0xFFFFA53E),
+      100: Color(0xFFFFA53E),
+      200: Color(0xFFFFA53E),
+      300: Color(0xFFFFA53E),
+      400: Color(0xFFFFA53E),
+      500: Color(0xFFFFA53E),
+      600: Color(0xFFFFA53E),
+      700: Color(0xFFFFA53E),
+      800: Color(0xFFFFA53E),
+      900: Color(0xFFFFA53E),
+    },
+  );
+
+
   static const _textTheme = TextTheme(
     bodyText2: TextStyle( //Text widget,
       fontSize : 16

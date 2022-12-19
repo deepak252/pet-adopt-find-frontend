@@ -45,6 +45,13 @@ class AppDrawer extends StatelessWidget {
                 icon: Icons.search,
                 title: "Find Pet",
               ),
+              _DrawerTile(
+                onTap: (){
+                  Navigator.pop(context);
+                }, 
+                icon: Icons.pets,
+                title: "Requests",
+              ),
               const Divider(thickness: 2,),
               !_userController.isSignedIn
               ? _DrawerTile(

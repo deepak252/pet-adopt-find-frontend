@@ -36,7 +36,7 @@ class CachedImageContainer extends StatelessWidget {
           fit: BoxFit.cover,
           height: height??70,
           width: width??70,
-          alignment: Alignment.topCenter, 
+          alignment: Alignment.center, 
           imageUrl: imgUrl,
           placeholder: (context, url) => FittedBox(
             fit: BoxFit.cover,

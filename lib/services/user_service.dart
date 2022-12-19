@@ -32,7 +32,7 @@ abstract class UserService{
     return await HttpUtils.post(
       methodName: "updateProfile", 
       token: token,
-      api: ApiPath.getProfile,
+      api: ApiPath.updateProfile,
       payload: data,
       onSuccess: (res)async{
         if(res?['data']!=null){

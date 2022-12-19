@@ -3,6 +3,7 @@ import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -80,49 +81,13 @@ class _EditUserProfileScreenState
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 editProfileForm(),
-                SizedBox(
+                const SizedBox(
                   height: 100,
                 ),
-
-                // Padding(
-                //   padding: EdgeInsets.symmetric(horizontal: 12),
-                //   child: CustomTextButton(
-                //     onPressed: () async {
-                //       unfocus(context); //Dismiss keyboard
-                //       customProgressDialog(
-                //           context: context, text: "Please wait...", willPop: false);
-                //       if (_formKey.currentState!.validate() &&
-                //           _customerProfileController.getCustomerProfile != null) {
-                //         bool? profileUpdated =
-                //             await Get.put(CustomerProfileController())
-                //                 .updateProfile(
-                //           customer: _customerProfileController.getCustomerProfile!
-                //               .copy(
-                //                   name: _nameController.text,
-                //                   mobile: _phoneController.text),
-                //         );
-                //         if (profileUpdated == true) {
-                //           customSnackbar(
-                //               message: "Profile updated successfully",
-                //               bgColor: Constants.snackbarColorSuccess);
-                //           Navigator.pop(context); //Dismiss customProgressDialog
-                //           // Navigator.pop(context); //Go back to my profile page
-                //           _bottomNavigationController.goToEcommerceDashboard();
-                //         } else {
-                //           Navigator.pop(context); //Dismiss customProgressDialog
-                //         }
-                //       } else {
-                //         Navigator.pop(context); //Dismiss customProgressDialog
-                //       }
-                //     },
-                //     text: "Save",
-                //     radius: 8,
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -133,7 +98,21 @@ class _EditUserProfileScreenState
           child: CustomElevatedButton(
             onPressed: ()async {
               unfocus(context);
-              
+              if(!_formKey.currentState!.validate()){
+                return;
+              }
+              customLoadingIndicator(context: context, dismissOnTap: false);
+              bool result = await _userController.updateProfile({
+                "fullName" : _nameController.text,
+                "email" : _emailController.text,
+                "mobile" : _phoneController.text
+              });
+              if(mounted){
+                Navigator.pop(context); //Dismiss loading indicator
+                if(result){
+                  Navigator.pop(context);
+                }
+              }
             },
             text: "Save",
           ),

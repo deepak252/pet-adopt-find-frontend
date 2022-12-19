@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/sign_up_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
@@ -105,6 +106,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       if(token!=null){
                         //Sign In Successfull
                         await Get.delete<UserController>();
+                        await Get.delete<BottomNavController>();
                         await UserPrefs.setToken(value: token);
                         Get.offAll(()=>const SplashScreen());
                       }

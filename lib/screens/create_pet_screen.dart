@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/config/pet_categories.dart';
+import 'package:adopt_us/config/pet_gender.dart';
 import 'package:adopt_us/config/pet_status.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
@@ -13,6 +14,7 @@ import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/custom_dropdown.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
+import 'package:adopt_us/widgets/custom_radio_button.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +30,9 @@ class CreatePetScreen extends StatefulWidget {
 
 class _CreatePetScreenState extends State<CreatePetScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _selectedStatus = PetStatus.adopt;
+  String _selectedStatus = PetStatus.surrender;
   String _selectedCategory = PetCategory.dog;
+  String _selectedGender = PetGender.m;
 
   final _formkey = GlobalKey<FormState>();
   final _petNameController = TextEditingController();
@@ -39,6 +42,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
   List<File> _petImages=[];
   final _petController = Get.put(PetController());
   final _userController = Get.put(UserController());
+
 
   
   @override
@@ -57,7 +61,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
       child: Scaffold(
         backgroundColor: Themes.backgroundColor,
         appBar: AppBar(title: const Text("Pet Details"),),
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           child: petProfileForm()
         ),
@@ -79,7 +83,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               if(!_userController.isSignedIn){
                 return CustomSnackbar.error(error: "Not Signed In");
               }
-              customLoadingIndicator(context: context);
+              customLoadingIndicator(context: context,dismissOnTap : false);
               //Upload pet images to firebase
               var imgUrls = await Future.wait(
                 _petImages.map((img)async{
@@ -146,24 +150,44 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomDropdown(
-              items: PetStatus.getList, 
-              value: _selectedStatus, 
+            const SizedBox(height: 10),
+            CustomRadioButton(
+              options: PetStatus.getList,
+              selectionOption: _selectedStatus,
               onChanged: (val){
-                _selectedStatus=val!;
-                setState(() {});
-              }
+                setState(() {
+                  _selectedStatus = val!;
+                });
+              },
             ),
-            const SizedBox(height: 18,),
-            CustomDropdown(
-              items: PetCategory.getList, 
-              value: _selectedCategory, 
-              onChanged: (val){
-                _selectedCategory=val!;
-                setState(() {});
-              }
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Flexible(
+                  child: CustomDropdown(
+                    items: PetCategory.getList, 
+                    value: _selectedCategory, 
+                    onChanged: (val){
+                      _selectedCategory=val!;
+                      setState(() {});
+                    }
+                  ),
+                ),
+                const SizedBox(width: 18,),
+                Flexible(
+                  child: CustomDropdown(
+                    items: PetGender.getList, 
+                    value: _selectedGender, 
+                    onChanged: (val){
+                      _selectedGender=val!;
+                      setState(() {});
+                    }
+                  ),
+                ),
+                
+              ],
             ),
-            if(_selectedStatus!=PetStatus.abondoned)
+            if(_selectedStatus!=PetStatus.abandoned)
               Column(
                 children: [
                   const SizedBox(height: 18,),
@@ -182,6 +206,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                     ],
                   ),
                   
+                  
                 ],
               ),
             const SizedBox(height: 18,),
@@ -198,14 +223,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
             ),
 
             const SizedBox(height: 8,),
-            // Text(
-            //   "Pet Pics",
-            //   style: TextStyle(
-            //     color: Themes.colorBlack.withOpacity(0.8),
-            //     fontSize: 16,
-            //   ),
-            // ),
-            // const SizedBox(height: 8,),
+          
             Align(
               alignment: Alignment.center,
               child: Wrap(
@@ -316,5 +334,3 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
     );
   }
 }
-
-// {"success":false,"error":"ER_DATA_TOO_LONG: Data too long for column 'photos' at row 1"}

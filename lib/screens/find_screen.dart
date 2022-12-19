@@ -1,93 +1,54 @@
-import 'package:adopt_us/config/app_theme.dart';
-import 'package:adopt_us/models/address.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/models/pet.dart';
+import 'package:adopt_us/screens/pet/abondoned_pet_details.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
-import 'package:adopt_us/widgets/missing_pet_widget.dart';
-import 'package:adopt_us/widgets/pet_widget.dart';
+import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'package:adopt_us/widgets/cached_image_container.dart';
 
 class FindScreen extends StatelessWidget {
   FindScreen({ Key? key }) : super(key: key);
 
-  final _pet = Pet(
-    petId: 1,
-    petName: "Shinti",
-    age: "1",
-    photos: ["https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313__340.jpg"],
-    address: Address(addressId: 1,addressLine : "new Delhi")
-  );
-
+  final _petController = Get.put(PetController());
+ 
   @override
   Widget build(BuildContext context) {
+    _petController.fetchAbondonedPets();
     return Scaffold(
-      body : DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            const TabBar(
-              labelPadding: EdgeInsets.symmetric(vertical: 12),
-              indicatorColor: Themes.colorPrimary,
-              unselectedLabelStyle: TextStyle(
-                color: Themes.colorBlack,
-                fontSize: 14,
-                fontFamily: Themes.ffamily1
-              ),
-              labelStyle: TextStyle(
-                color: Themes.colorBlack,
-                fontSize: 16,
-                fontFamily: Themes.ffamily1
-              ),
-              tabs: [
-                Text(
-                  "Missing",
-                  style: TextStyle(
-                    color: Themes.colorBlack,
-                    // fontSize: 16
-                    
-                  ),
-                ),
-                Text(
-                  "Abondoned",
-                  style: TextStyle(
-                    color: Themes.colorBlack,
-                    // fontSize: 16
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  ListView.separated(
-                    itemCount: 10,
-                    separatorBuilder: (BuildContext context, int index){
-                      return Divider();
-                    },
-                    itemBuilder: (BuildContext context, int index){
-                      return MissingPetWidget(
-                        pet: _pet,
-                      );
-                    },
-                  ),
-                  ListView.separated(
-                    itemCount: 10,
-                    separatorBuilder: (BuildContext context, int index){
-                      return Divider();
-                    },
-                    itemBuilder: (BuildContext context, int index){
-                      return MissingPetWidget(
-                        pet: _pet,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      body : Obx((){
+        if(_petController.loadingAbondonedPets){
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if(_petController.abandonedPets.isEmpty){
+          return NoResultWidget(
+            title: "No Pets Found!",
+            onRefresh: ()async{
+              _petController.fetchAbondonedPets(enableLoading: true);
+            },
+          );
+        }
+        return RefreshIndicator(
+          onRefresh: ()async{
+            await _petController.fetchAbondonedPets(enableLoading: true);
+          },
+          child: ListView.separated(
+            itemCount: _petController.abandonedPets.length,
+            separatorBuilder: (BuildContext context, int index){
+              return const Divider();
+            },
+            itemBuilder: (BuildContext context, int index){
+              return _AbondonedPet(
+                pet: _petController.abandonedPets[index]
+              );
+            },
+          ),
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: ()async {
           await Get.bottomSheet(
@@ -135,6 +96,106 @@ class FindScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+class _AbondonedPet extends StatelessWidget {
+  final Pet pet;
+  const _AbondonedPet({ Key? key, required this.pet}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        Get.to(()=>AbondonedPetDetailsScreen(
+          pet: pet,
+        ));
+      },
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 2),
+
+        child: Column(
+          // alignment: Alignment.topRight,
+          children: [
+            CachedImageContainer(
+              imgUrl: pet.photos.first,
+              borderRadius: BorderRadius.circular(6),
+              width: double.infinity,
+              height: 250,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4,),
+                Text(
+                  "Abandoned",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.redAccent.withOpacity(0.8)
+                  ),
+                ),
+                const SizedBox(height: 4,),
+                Row(
+                  children: [
+                    const Icon(Icons.location_pin,size: 16,),
+                    Text(
+                      "${pet.address?.addressLine}",
+                      style: const TextStyle(
+                        fontSize: 13
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     Flexible(
+            //       flex: 2,
+            //       child: CachedImageContainer(
+            //         imgUrl: pet.photos.first,
+            //         borderRadius: BorderRadius.circular(8),
+            //         width: double.infinity,
+            //         height: 150,
+            //       ),
+            //     ),
+            //     const SizedBox(width: 10,),
+            //     Flexible(
+            //       flex: 3,
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text(
+            //             pet.petName!,
+            //             style: const TextStyle(
+            //               fontWeight: FontWeight.bold,
+            //               fontSize: 18
+            //             ),
+            //           ),
+            //           const SizedBox(height: 8,),
+            //           Row(
+            //             children: [
+            //               const Icon(Icons.location_pin,size: 16,),
+            //               Text(
+            //                 "${pet.address?.addressLine}",
+            //                 style: const TextStyle(
+            //                   fontSize: 13
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // )
+          ],
+        ),
       ),
     );
   }

@@ -28,7 +28,7 @@ class User {
     email: json["email"],
     mobile: json["mobile"],
     profilePic: json["profilePic"],
-    fcmToken: json["fcmId"],
+    fcmToken: json["fcmToken"],
     createdAt: DateTime.tryParse(json["createdAt"]??''),
     updatedAt: DateTime.tryParse(json["updatedAt"]??''),
   );
@@ -40,7 +40,7 @@ class User {
     "email": email,
     "mobile": mobile,
     "profilePic": profilePic,
-    "fcmId": fcmToken,
+    "fcmToken": fcmToken,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
   };

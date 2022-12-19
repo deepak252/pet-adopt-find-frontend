@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
@@ -12,12 +14,14 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // log("${_userController.user}");
     return Scaffold(
       body: Obx((){
         if(!_userController.isSignedIn){
           return const NotSignedIn();
         }
         final user  = _userController.user!;
+        // log("${user.profilePic.runtimeType}");
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(

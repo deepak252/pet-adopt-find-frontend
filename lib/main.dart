@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -16,6 +17,7 @@ void main() async{
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await FCMService.init();
   } catch (e) {
     log("ERROR : Firebase Initialization Error , $e");
   }
