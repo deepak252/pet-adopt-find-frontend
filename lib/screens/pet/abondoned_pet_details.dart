@@ -127,7 +127,6 @@ class AbondonedPetDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: CustomElevatedButton(
             onPressed: ()async{
-              _requestController.sendAdoptRequest(pet.petId.toString());
             },
             text: "Contact",
           ),

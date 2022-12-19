@@ -5,6 +5,7 @@ import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -113,7 +114,9 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: CustomElevatedButton(
             onPressed: ()async{
+              customLoadingIndicator(context: context,dismissOnTap: false);
               bool res =await  _requestController.sendAdoptRequest(pet.petId.toString());
+              Navigator.pop(context);
               if(res){
                 CustomSnackbar.message(msg: "Request sent");
               }

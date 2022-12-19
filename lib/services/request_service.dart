@@ -19,9 +19,8 @@ abstract class RequestService{
       token: token,
       onSuccess: (res)async{
         if(res?['data']!=null){
-          
+          return true;
         }
-        return null;
       },
       debug: _debug,
     );
