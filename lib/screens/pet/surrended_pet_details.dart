@@ -61,7 +61,7 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if(pet.age?.trim()!='')
+                      if(pet.age!=null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 3),
                           child: Text(

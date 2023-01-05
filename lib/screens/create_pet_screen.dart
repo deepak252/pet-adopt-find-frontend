@@ -123,13 +123,13 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 }else{
                   //Operation unsuccessful
                   // Delete pet images from firebase storage
-                  imgUrls.map((url)async{
+                  for (var url in imgUrls) {
                     if(url!=null){
                       FirebaseStorageService.deleteFile(
                         fileUrl: url
                       );
                     }
-                  });
+                  }
                 }
               }
             },

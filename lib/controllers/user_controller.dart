@@ -19,13 +19,14 @@ class UserController extends GetxController{
   
   @override
   void onInit() {
-    // fetchProfile();
-    // TODO: implement onInit
     super.onInit();
+    
+    fetchProfile();
+    
   }
 
   Future fetchProfile({bool enableLoading = false})async{
-    if(isLoading){
+    if(isLoading || UserPrefs.token==null){
       return;
     }
     if(enableLoading){

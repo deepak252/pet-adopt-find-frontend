@@ -26,7 +26,7 @@ class Pet {
     String? petName;
     String? breed;
     String? petInfo;
-    String? age;
+    int? age;
     List<String> photos;
     String? category;
     String? petStatus;
