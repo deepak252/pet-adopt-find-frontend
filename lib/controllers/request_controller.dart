@@ -1,39 +1,62 @@
-import 'package:adopt_us/config/pet_status.dart';
-import 'package:adopt_us/models/pet.dart';
-import 'package:adopt_us/services/pet_service.dart';
+import 'package:adopt_us/models/request.dart';
 import 'package:adopt_us/services/request_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:get/get.dart';
 
 class RequestController extends GetxController{
-  final _loadingAllPets = false.obs;
-  bool get loadingAllPets => _loadingAllPets.value;
 
-  final  _allPets = Rxn<List<Pet>>();
-  List<Pet> get allPets => _allPets.value??[];
+  final _loadingReqReceived = false.obs;
+  bool get loadingReqReceived => _loadingReqReceived.value;
+  final  _reqReceived = Rxn<List<Request>>();
+  List<Request> get reqReceived => _reqReceived.value??[];
 
-  
+  final _loadingReqMade = false.obs;
+  bool get loadingReqMade => _loadingReqMade.value;
+  final  _reqMade = Rxn<List<Request>>();
+  List<Request> get reqMade => _reqMade.value??[];
   
   final _token = UserPrefs.token;
+
+  bool isRequested(int petId){
+    return reqMade.indexWhere((r) => petId==r.pet?.petId)!=-1;
+  }
   
   @override
   void onInit() {
+    fetchRequestsReceived(enableLoading: true);
+    fetchRequestsMade(enableLoading: true);
     super.onInit();
   }
 
-  Future fetchAllPets({bool enableLoading = false})async{
-    if(loadingAllPets){
+  Future fetchRequestsReceived({bool enableLoading = false})async{
+    if(loadingReqReceived || _token==null){
       return;
     }
     if(enableLoading){
-      _loadingAllPets(true);
+      _loadingReqReceived(true);
     }
-    final pets = await PetService.getAllPets();
-    if(pets!=null){
-      _allPets(pets);
+    final requests = await RequestService.getRequestsReceived(
+      token: _token!
+    );
+    _reqReceived(requests);
+    if(enableLoading){
+      _loadingReqReceived(false);
+    }
+  }
+
+  Future fetchRequestsMade({bool enableLoading = false})async{
+    if(loadingReqMade || _token==null){
+      return;
     }
     if(enableLoading){
-      _loadingAllPets(false);
+      _loadingReqMade(true);
+    }
+    final requests = await RequestService.getRequestsMade(
+      token: _token!
+    );
+    _reqMade(requests);
+    if(enableLoading){
+      _loadingReqMade(false);
     }
   }
 
@@ -46,6 +69,8 @@ class RequestController extends GetxController{
       petId: petId
     );
     if(result!=null){
+      fetchRequestsMade();
+      fetchRequestsReceived();
       // fetchAllPets();
       return result;
     }

@@ -1,4 +1,5 @@
 import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/create_pet_screen.dart';
@@ -16,6 +17,7 @@ class HomeScreen extends StatelessWidget {
 
   final _petController = Get.put(PetController());
   final _userController = Get.put(UserController());
+  final _requestController = Get.put(RequestController());
 
   @override
   Widget build(BuildContext context) {

@@ -29,6 +29,7 @@ class UserController extends GetxController{
     if(isLoading || UserPrefs.token==null){
       return;
     }
+    log("JWT TOKEN : ${UserPrefs.token}");
     if(enableLoading){
       _loading(true);
     }

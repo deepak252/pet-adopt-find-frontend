@@ -58,6 +58,8 @@ class PetController extends GetxController{
     );
     if(result!=null){
       fetchAllPets();
+      fetchSurrendedPets();
+      fetchAbondonedPets();
       return result;
     }
     return false;

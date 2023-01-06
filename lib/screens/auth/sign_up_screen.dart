@@ -7,6 +7,7 @@ import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -99,12 +100,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if(!_formkey.currentState!.validate()){
                         return;
                       }
+                      customLoadingIndicator(context: context,dismissOnTap: false);
                       final token = await AuthService.signUp(
                         name: _nameController.text, 
                         email: _emailController.text, 
                         phone: _phoneController.text, 
                         password: _passwordController.text
                       );
+                      if(mounted){
+                        Navigator.pop(context); //dismiss loading indicator
+                      }
                       if(token!=null){
                         //Sign Up Successfull
                         await Get.delete<UserController>();

@@ -15,7 +15,9 @@ abstract class ApiPath{
   static const String getPetByStatus = "$_baseUrl/pet/getPets";
   static const String myPets = "$_baseUrl/pet/mypets";
 
-  static const String adoptRequest = "$_baseUrl/pet/adoptRequest";
+  static const String createRequest = "$_baseUrl/request/create";
+  static const String requestsReceived = "$_baseUrl/request/requestsReceived";
+  static const String requestsMade = "$_baseUrl/request/requestsMade";
 
 
 }
