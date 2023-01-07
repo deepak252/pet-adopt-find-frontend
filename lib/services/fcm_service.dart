@@ -17,7 +17,6 @@ class FCMService {
   static Future init()async{
     
     await _messaging.subscribeToTopic("stelonotification");
-    
     await _messaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
@@ -37,20 +36,6 @@ class FCMService {
 
   }
 
-  static Future sendMessage ({
-    required String receiverFcm,
-    required String data
-  })async{
-    await _messaging.sendMessage(
-      to: receiverFcm,
-      data: {
-        "hellow" : data
-      },
-      collapseKey: "1",
-      messageId: "2",
-      messageType: "3"
-    );
-  }
   //Only for testing
   static Future sendNotification({
     required String fcmToken,
@@ -62,7 +47,7 @@ class FCMService {
           await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
             headers: {
               "Content-Type": "application/json",
-              "Authorization":  "key=AAAADp_RBHg:APA91bHgdrOZ20nLvM1CyGg-I4L-gaMZtG2gn8_ma-9rfmBxgYzO_vld_52H5J2ZJ0agjTT7fQGUcCSpAeSMq721FFJbvbsa5bUUpLl552y7ISbuE0egoN3Auvx9R-uTf85QTNO7lBnq"
+              "Authorization":  "key=AAAAl-pRoxo:APA91bHS0Hir-Ctvql4m5UI_fX4kJlCyGhJS7BHp6KNVUVAphg3XF0EQtRVscLjpX7pL-HobUgZa21EwhTZPwH4i4qsUdTcQfsa1vPYqUdoATPU7hfEtLYLisPDNB6ePSbNJSD6waahl"
             },
             body: jsonEncode({
               "to": fcmToken,
