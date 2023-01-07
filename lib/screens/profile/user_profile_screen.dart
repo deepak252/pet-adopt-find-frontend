@@ -89,6 +89,19 @@ class UserProfileScreen extends StatelessWidget {
                     Get.to(()=>EditUserProfileScreen());
                   }
                 ),
+                // optionWidget(
+                //   label: "Notification",
+                //   icon: Icons.notification_add,
+                //   onTap: ()async{
+                //     final token = await FCMService.getFcmToken();
+                //     log("Fcmtoken = $token");
+                //     FCMService.sendNotification(fcmToken: token!, title: "Hello");
+                //     // NotificationUtils.createNewNotification(
+                //     //   title: "Test",
+                //     //   img: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png'
+                //     // );
+                //   }
+                // ),
                
                 
 

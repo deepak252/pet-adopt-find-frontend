@@ -1,7 +1,9 @@
 
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
+import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SelectedUserProfile extends StatelessWidget {
   final User user;
@@ -40,17 +42,25 @@ class SelectedUserProfile extends StatelessWidget {
                 label: "${user.mobile}",
                 trailingIcon: Icons.phone,
                 trailingColor: Colors.green,
-                onTap: (){
-
-                }
+                onTap: user.mobile?.isNotEmpty==true
+                ? ()async{
+                    if (!await launchUrl(Uri.parse("tel:${user.mobile}"))) {
+                      CustomSnackbar.error(error: "error");
+                    }
+                  }
+                : null
               ),
               optionWidget(
                 label: "${user.email}",
                 trailingIcon: Icons.email,
                 trailingColor: const Color(0xFFD64A3E),
-                onTap: (){
-                  
-                }
+                onTap: user.email?.isNotEmpty==true
+                ? ()async{
+                    if (!await launchUrl(Uri.parse("mailto:${user.email}"))) {
+                      CustomSnackbar.error(error: "error");
+                    }
+                  }
+                : null
               ),
               
               // Row(
