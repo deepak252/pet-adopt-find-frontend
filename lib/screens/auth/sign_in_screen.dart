@@ -1,11 +1,20 @@
+import 'dart:developer';
+
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/sign_up_screen.dart';
+import 'package:adopt_us/splash_screen.dart';
+import 'package:adopt_us/services/auth_service.dart';
+import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -54,6 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     controller: _emailController,
                     hintText: " Email",
                     validator: TextValidator.validateEmail,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 18,),
                   CustomTextField(
@@ -81,8 +91,25 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   const SizedBox(height: 36,),
                   CustomElevatedButton(
-                    onPressed: (){
-
+                    onPressed: ()async{
+                      if(!_formkey.currentState!.validate()){
+                        return;
+                      }
+                      customLoadingIndicator(context: context,dismissOnTap: false);
+                      final token = await AuthService.signIn(
+                        email: _emailController.text, 
+                        password: _passwordController.text
+                      );
+                      if(mounted){
+                        Navigator.pop(context); //dismiss loading indicator
+                      }
+                      if(token!=null){
+                        //Sign In Successfull
+                        await Get.delete<UserController>();
+                        await Get.delete<BottomNavController>();
+                        await UserPrefs.setToken(value: token);
+                        Get.offAll(()=>const SplashScreen());
+                      }
                     },
                     text: "Sign In",
                   ),

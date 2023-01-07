@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class CachedImageContainer extends StatelessWidget {
   final String imgUrl;
-  final double borderRadius;
+  final BorderRadius? borderRadius;
   final double? height;
   final double? width;
   final Color? borderColor;
   final IconData? placeholderIcon;
   const CachedImageContainer({ Key? key, 
     required this.imgUrl,
-    this.borderRadius = 100,
+    this.borderRadius ,
     this.borderColor,
     this.height,
     this.width,
@@ -28,15 +28,15 @@ class CachedImageContainer extends StatelessWidget {
         border: Border.all(
           color: borderColor?? Colors.transparent,
         ),
-        borderRadius: BorderRadius.circular(borderRadius)
+        borderRadius: borderRadius??BorderRadius.circular(12)
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular( borderRadius),
+        borderRadius: borderRadius??BorderRadius.circular(12),
         child: CachedNetworkImage(
           fit: BoxFit.cover,
           height: height??70,
           width: width??70,
-          alignment: Alignment.topCenter, 
+          alignment: Alignment.center, 
           imageUrl: imgUrl,
           placeholder: (context, url) => FittedBox(
             fit: BoxFit.cover,
