@@ -1,8 +1,12 @@
 import 'dart:developer';
 
+import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/pet/my_pets_screen.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/services/fcm_service.dart';
+import 'package:adopt_us/services/pet_service.dart';
+import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/utils/notification_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/not_signed_in.dart';
@@ -37,7 +41,7 @@ class UserProfileScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CachedImageContainer(
-                      imgUrl: user.profilePic??"https://assets-global.website-files.com/60e5f2de011b86acebc30db7/61aa5a5ff33bfa3e4d4e9a21_avatar-24-denis.jpg",
+                      imgUrl: user.profilePic??Constants.defaultPic,
                       height: 100,
                       width: 100,
                     ),
@@ -80,7 +84,10 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 optionWidget(
                   label: "My Pets",
-                  icon: Icons.pets
+                  icon: Icons.pets,
+                  onTap: (){
+                    Get.to(()=>MyPetsScreen());
+                  }
                 ),
                 optionWidget(
                   label: "Edit Profile",
@@ -89,6 +96,7 @@ class UserProfileScreen extends StatelessWidget {
                     Get.to(()=>EditUserProfileScreen());
                   }
                 ),
+                
                 // optionWidget(
                 //   label: "Notification",
                 //   icon: Icons.notification_add,

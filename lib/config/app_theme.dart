@@ -10,6 +10,22 @@ abstract class Themes{
   static const backgroundColor=Color(0xFFF6F6F6);
 
   static MaterialColor materialColorSecondary = const MaterialColor(
+    0xFF422383,
+    <int, Color>{
+      50: Color(0xFF422383),
+      100: Color(0xFF422383),
+      200: Color(0xFF422383),
+      300: Color(0xFF422383),
+      400: Color(0xFF422383),
+      500: Color(0xFF422383),
+      600: Color(0xFF422383),
+      700: Color(0xFF422383),
+      800: Color(0xFF422383),
+      900: Color(0xFF422383),
+    },
+  );
+
+  static MaterialColor materialColorPrimary = const MaterialColor(
     0xFFFFA53E,
     <int, Color>{
       50: Color(0xFFFFA53E),
@@ -120,6 +136,17 @@ abstract class Themes{
     fontFamily: ffamily1,
     listTileTheme: ListTileThemeData(
       iconColor: colorBlack.withOpacity(0.9),
+    ),
+    tabBarTheme: const TabBarTheme(
+      labelColor: colorBlack,
+      labelStyle: TextStyle(
+        fontSize: 15,
+        fontFamily: ffamily1
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: 14,
+        fontFamily: ffamily1
+      ),
     )
     
   );

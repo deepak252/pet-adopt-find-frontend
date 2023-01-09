@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 typedef SuccessCallback<T> = Future<T?> Function(dynamic);
 
 abstract class HttpUtils{
-  //Return token on successful SignIn
+
   static Future<T?> post<T>({
     required String methodName,
     required String api,
@@ -51,7 +51,6 @@ abstract class HttpUtils{
     return null;
   }
 
-  //Return token on successful SignIn
   static Future<T?> get<T>({
     required String methodName,
     required String api,
@@ -70,6 +69,47 @@ abstract class HttpUtils{
       http.Response  response = await http.get(
         Uri.parse(api),
         headers: headers
+      );
+      if(response.statusCode==200){
+        final result = jsonDecode(response.body);
+        debug.message(methodName, result);
+        return await onSuccess(result);
+      }else {
+        throw response.body;
+      }
+    }catch(e,s){
+      debug.error(methodName, error: e,stackTrace: s);
+      try{
+        final error =  jsonDecode(e.toString())['error'];
+        CustomSnackbar.error(error: error);
+      }catch(e2){
+        CustomSnackbar.error(error: "Something went wrong!");
+      }
+    }
+    return null;
+  }
+
+  static Future<T?> put<T>({
+    required String methodName,
+    required String api,
+    required DebugUtils debug,
+    required SuccessCallback<T> onSuccess,
+    VoidCallback? onError,
+    String? token,
+    Map<String,dynamic>? payload,
+
+  }) async {
+    try{
+      var headers = {
+        "Content-Type": "application/json",
+      };
+      if(token!=null){
+        headers["Authorization"] = "Bearer $token";
+      }
+      http.Response  response = await http.put(
+        Uri.parse(api),
+        headers: headers,
+        body: payload!=null ? jsonEncode(payload) : null
       );
       if(response.statusCode==200){
         final result = jsonDecode(response.body);

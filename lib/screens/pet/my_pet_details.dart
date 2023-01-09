@@ -4,6 +4,7 @@ import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
+import 'package:adopt_us/screens/pet/edit_pet_screen.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
@@ -12,9 +13,9 @@ import 'package:adopt_us/widgets/selected_user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SurrendedPetDetailsScreen extends StatelessWidget {
+class MyPetDetails extends StatelessWidget {
   final Pet pet;
-  SurrendedPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
+  MyPetDetails({ Key? key, required this.pet}) : super(key: key);
 
   final _requestController = Get.put(RequestController());
   final _userController = Get.put(UserController());
@@ -24,8 +25,23 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          title: Text("${pet.petName}"),
+          actions: [
+            SizedBox(
+              height: 50,width: 50,
+              child: RawMaterialButton(
+                shape: const CircleBorder(),
+                onPressed: (){
+                  Get.to(()=> EditPetScreen(
+                    pet: pet,
+                  ));
+                }, 
+                child: const Icon(Icons.edit)
+              ),
+            )
+          ],
         ),
-        extendBodyBehindAppBar: true,
+        // extendBodyBehindAppBar: true,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,7 +108,7 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
                             const SizedBox(width: 4,),
                             InkWell(
                               onTap: ()async{
-                                showUserProfile(pet.user!);
+                                await showUserProfile(pet.user!);
                               },
                               child: Text(
                                 "${pet.user?.fullName}",

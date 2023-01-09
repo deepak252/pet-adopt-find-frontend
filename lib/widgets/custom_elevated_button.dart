@@ -9,6 +9,7 @@ class CustomElevatedButton extends StatelessWidget {
   final double textSize;
   final bool boldText;
   final Color? btnColor;
+  final Color? txtColor;
   final Widget? child;
   final double borderRadius;
   const CustomElevatedButton({ 
@@ -21,6 +22,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.width = double.infinity,
     this.boldText = true,
     this.btnColor,
+    this.txtColor,
     this.borderRadius=12
   }) : super(key: key);
 
@@ -30,7 +32,7 @@ class CustomElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         padding: padding ?? const EdgeInsets.all(18),
-        primary: btnColor??Themes.colorPrimary,
+        backgroundColor: btnColor??Themes.colorPrimary,
         shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
@@ -41,6 +43,7 @@ class CustomElevatedButton extends StatelessWidget {
         style: TextStyle(
             fontSize: textSize,
             fontWeight: boldText ? FontWeight.w500 : FontWeight.w400,
+            color: txtColor
           ),
       ),
     );

@@ -7,28 +7,30 @@ import 'package:adopt_us/config/pet_gender.dart';
 import 'package:adopt_us/config/pet_status.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
+import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/custom_dropdown.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
-import 'package:adopt_us/widgets/custom_radio_button.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class CreatePetScreen extends StatefulWidget {
-  const CreatePetScreen({ Key? key }) : super(key: key);
+class EditPetScreen extends StatefulWidget {
+  final Pet pet;
+  const EditPetScreen({ Key? key, required this.pet}) : super(key: key);
 
   @override
-  State<CreatePetScreen> createState() => _CreatePetScreenState();
+  State<EditPetScreen> createState() => _EditPetScreenState();
 }
 
-class _CreatePetScreenState extends State<CreatePetScreen> {
+class _EditPetScreenState extends State<EditPetScreen> {
   final _formKey = GlobalKey<FormState>();
   String _selectedStatus = PetStatus.surrender;
   String _selectedCategory = PetCategory.dog;
@@ -38,10 +40,28 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
   final _petAgeController = TextEditingController();
   final _petDescriptionController = TextEditingController();
   final _breedController = TextEditingController();
-  List<File> _petImages=[];
+
   final _petController = Get.put(PetController());
   final _userController = Get.put(UserController());
 
+  List<File> _newImages=[];
+  List<String> _oldImages=[];
+  @override
+  void initState() {
+    super.initState();
+    if(PetGender.list.contains(widget.pet.gender)){
+      _selectedGender=widget.pet.gender!;
+    }
+    if(PetCategory.list.contains(widget.pet.category)){
+      _selectedCategory=widget.pet.category!;
+    }
+
+    _oldImages=widget.pet.photos.map((e) => e).toList();
+    _petNameController.text=widget.pet.petName??"";
+    _petAgeController.text=(widget.pet.age??"").toString();
+    _breedController.text=widget.pet.breed??"";
+    _petDescriptionController.text=widget.pet.petInfo??"";
+  }
 
   
   @override
@@ -55,12 +75,13 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log("${widget.pet.gender==null}");
+    log("${widget.pet.category}");
     return GestureDetector(
       onTap: ()=>unfocus(context),
       child: Scaffold(
         backgroundColor: Themes.backgroundColor,
-        appBar: AppBar(title: const Text("Pet Details"),),
-        // resizeToAvoidBottomInset: false,
+        appBar: AppBar(title: const Text("Edit Pet"),),
         body: SingleChildScrollView(
           child: petProfileForm()
         ),
@@ -71,21 +92,21 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
           child: CustomElevatedButton(
             onPressed: ()async {
               unfocus(context);
-              bool postCreated=false;
+              bool petUpdated=false;
+              if(!_userController.isSignedIn){
+                return CustomSnackbar.error(error: "Not Signed In");
+              }
               if(!_formKey.currentState!.validate()){
                 log("Invalid form");
                 return;
               }
-              if(_petImages.isEmpty){
+              if(_oldImages.isEmpty && _newImages.isEmpty){
                 return CustomSnackbar.error(error: "Upload Pet Image");
               }
-              if(!_userController.isSignedIn){
-                return CustomSnackbar.error(error: "Not Signed In");
-              }
               customLoadingIndicator(context: context,dismissOnTap : false);
-              //Upload pet images to firebase
-              var imgUrls = await Future.wait(
-                _petImages.map((img)async{
+              // Upload pet images to firebase
+              var newImgUrls = await Future.wait(
+                _newImages.map((img)async{
                   String? fileName = FileUtils.getFileNameFromPath(img.path);
                   if(fileName!=null){
                     return  FirebaseStorageService.uploadFile(
@@ -96,41 +117,46 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                   }
                 })
               )..removeWhere((e) => e==null);
-              log("$imgUrls");
-              if(imgUrls.isNotEmpty){
-                postCreated = await _petController.createPet({
+              log("newImgUrls : $newImgUrls");
+              if(_oldImages.isNotEmpty || newImgUrls.isNotEmpty){
+                petUpdated = await _petController.editPet({
+                  "petId" : widget.pet.petId,
                   "userId" : _userController.user!.userId,
                   "petName" : _petNameController.text,
                   "breed" : _breedController.text,
                   "age" : _petAgeController.text,
-                  "photos" : imgUrls,
+                  "photos" : [..._oldImages,...newImgUrls],
                   "petStatus" : _selectedStatus,
                   "gender" : _selectedGender,
                   "petInfo" : _petDescriptionController.text,
                   "category" : _selectedCategory
-                  // "addressLine" : "B-54, Andheri East",
-                  // "city" : "Mumbai",
-                  // "state" : "Maharastra",
-                  // "pincode" : "232424",
-                  // "coordinates" : ["42424", "42424"] 
                 });
               }
               if(mounted){
                 Navigator.pop(context); //Dismiss loading indicator
-                if(postCreated){
-                  CustomSnackbar.message(msg: "Pet profile created successfully");
+                if(petUpdated){
+                  CustomSnackbar.message(msg: "Pet profile updated successfully");
+                  //Operation successful
+                  // Delete removed images from firebase storage
+                  List imgsToRemove = [];
+                  for(var img in widget.pet.photos){
+                    if(!_oldImages.contains(img)){
+                      imgsToRemove.add(img);
+                    }
+                  }
+                  log("imgsToRemove : $imgsToRemove");
+                  FirebaseStorageService.deleteMultipleFiles(fileUrls: imgsToRemove);
+                 
                   Navigator.pop(context);
                 }else{
                   //Operation unsuccessful
-                  // Delete pet images from firebase storage
-                  FirebaseStorageService.deleteMultipleFiles(
-                    fileUrls: imgUrls
-                  );
+                  // Delete new images from firebase storage
+                  FirebaseStorageService.deleteMultipleFiles(fileUrls: newImgUrls);
                   
                 }
               }
             },
-            text: "Submit",
+            text: "Update",
           ),
         )
       ),
@@ -148,16 +174,16 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            CustomRadioButton(
-              options: PetStatus.list,
-              selectionOption: _selectedStatus,
-              onChanged: (val){
-                setState(() {
-                  _selectedStatus = val!;
-                });
-              },
-            ),
-            const SizedBox(height: 18),
+            // CustomRadioButton(
+            //   options: PetStatus.getList,
+            //   selectionOption: _selectedStatus,
+            //   onChanged: (val){
+            //     setState(() {
+            //       _selectedStatus = val!;
+            //     });
+            //   },
+            // ),
+            // const SizedBox(height: 18),
             Row(
               children: [
                 Flexible(
@@ -203,7 +229,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                     ],
                   ),
                   
-                  
                 ],
               ),
             const SizedBox(height: 18,),
@@ -228,9 +253,13 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 spacing: 10,
                 runSpacing: 10,
                 children: [
-                  for(int i=0;i<_petImages.length;i++)
-                    imageTile(_petImages[i]),
-                  if(_petImages.length<5)
+                  // Existing Images (Image Url)
+                  for(int i=0;i<_oldImages.length;i++)
+                    imageTile(imgUrl: _oldImages[i]),
+                  // New Images (Image File)
+                  for(int i=0;i<_newImages.length;i++)
+                    imageTile(imgFile: _newImages[i]),
+                  if(_oldImages.length + _newImages.length<5)
                     InkWell(
                       onTap: ()async{
                         FileUtils.pickImageFromGallery().then((pickedImage){
@@ -239,7 +268,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                           double fileSize = FileUtils.fileSizeKB(img);
                           log("File : ${pickedImage.path} size $fileSize KB");
                           if (fileSize <= 2048) {
-                            _petImages.add(img);
+                            _newImages.add(img);
                             setState(() {});
                           } else {
                             CustomSnackbar.message(
@@ -293,27 +322,40 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
   }
 
 
-  Widget imageTile(File img){
+  Widget imageTile({String? imgUrl, File? imgFile}){
     return Stack(
       alignment: Alignment.topRight,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: SizedBox(
-            height: 100,
+        imgUrl!=null
+        ? CachedImageContainer(
+            imgUrl: imgUrl,
+            borderRadius: BorderRadius.circular(8),
             width: 100,
-            child: Image.file(
-              img,
-              fit: BoxFit.cover,
+            height: 100,
+          )
+        :  ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: SizedBox(
+              height: 100,
+              width: 100,
+              child: Image.file(
+                imgFile!,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
         InkWell(
           onTap: (){
-            _petImages.remove(img);
-            setState(() {
+            if(imgUrl!=null){
+              _oldImages.remove(imgUrl);
+            }else if(imgFile!=null){
+              _newImages.remove(imgFile);
+            }
+            setState(() {});
+            // _petImages.remove(img);
+            // setState(() {
               
-            });
+            // });
           },
           child: Container(
             decoration: BoxDecoration(

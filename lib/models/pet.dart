@@ -13,6 +13,7 @@ class Pet {
       this.petInfo,
       this.breed,
       this.age,
+      this.gender,
       this.category,
       this.petStatus,
       this.createdAt,
@@ -27,6 +28,7 @@ class Pet {
     String? breed;
     String? petInfo;
     int? age;
+    String? gender;
     List<String> photos;
     String? category;
     String? petStatus;
@@ -41,6 +43,7 @@ class Pet {
         petName: json["petName"],
         breed: json["breed"],
         age: json["age"],
+        gender: json["gender"],
         photos: json["photos"]!=null && json["photos"].trim()!=''
         ? json["photos"]?.split(',')
         : [],
@@ -55,6 +58,7 @@ class Pet {
         "petName": petName,
         "breed": breed,
         "age": age,
+        "gender": gender,
         "photos": photos,
         "category": category,
         "petInfo": petInfo,

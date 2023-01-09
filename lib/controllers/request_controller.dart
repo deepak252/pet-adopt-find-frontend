@@ -71,7 +71,6 @@ class RequestController extends GetxController{
     if(result!=null){
       fetchRequestsMade();
       fetchRequestsReceived();
-      // fetchAllPets();
       return result;
     }
     return false;

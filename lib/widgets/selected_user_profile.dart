@@ -1,9 +1,26 @@
 
+import 'package:adopt_us/config/constants.dart';
+import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
+import 'package:adopt_us/widgets/custom_icon_button.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+Future showUserProfile(User user)async{
+  return await Get.bottomSheet(
+    SelectedUserProfile(user: user,),
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16)
+      )
+    )
+  );
+}
 
 class SelectedUserProfile extends StatelessWidget {
   final User user;
@@ -18,7 +35,7 @@ class SelectedUserProfile extends StatelessWidget {
         title: Row(
           children: [
             CachedImageContainer(
-              imgUrl: user.profilePic??"https://assets-global.website-files.com/60e5f2de011b86acebc30db7/61aa5a5ff33bfa3e4d4e9a21_avatar-24-denis.jpg",
+              imgUrl: user.profilePic??Constants.defaultPic,
               height: 50,
               width: 50,
               borderRadius: BorderRadius.circular(100),
@@ -103,29 +120,12 @@ class SelectedUserProfile extends StatelessWidget {
         ),
       ),
       trailing: trailingIcon !=null
-      ? SizedBox(
-          height: 50,width: 50,
-          child: RawMaterialButton(
-            fillColor: trailingColor,
-            shape: const CircleBorder(),
-            onPressed: onTap, 
-            child: Icon(trailingIcon, color: Colors.white,)
-          ),
+      ? CustomIconButton(
+          onPressed: onTap,
+          btnColor: trailingColor,
+          child: Icon(trailingIcon, color: Colors.white,)
         )
       : null
-    );
-    return ListTile(
-      onTap: onTap,
-      title: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 18
-        ),
-      ),
-     
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-      ),
     );
   }
 

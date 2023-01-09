@@ -2,6 +2,7 @@ import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/sign_in_screen.dart';
+import 'package:adopt_us/screens/requests_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,7 @@ class AppDrawer extends StatelessWidget {
               _DrawerTile(
                 onTap: (){
                   Navigator.pop(context);
+                  Get.to(()=>RequestsScreen());
                 }, 
                 icon: Icons.pets,
                 title: "Requests",

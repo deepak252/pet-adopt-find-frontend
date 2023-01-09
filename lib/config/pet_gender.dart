@@ -4,6 +4,6 @@ class PetGender{
   // static const missing= "missing";
   static const f= "female";
 
-  static List<String> get getList => [m,f];
+  static List<String> get list => [m,f];
   
 }
