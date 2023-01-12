@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:adopt_us/utils/notification_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,15 +25,9 @@ class FCMService {
     );
 
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message)async {
-      _logMessage("Handling a Foreground message", message.toMap());
-      final data = message.data;
-      // NotificationUtils.showNotification(
-      //   title: data['title'],
-      //   desc: data['body'],
-      // );
-     
-    });
+    FirebaseMessaging.onMessage.listen(
+      (message)=>handleFcmMessage(message,service: "FOREGROUND")
+    );
 
   }
 
@@ -81,4 +76,15 @@ class FCMService {
   static void _logError(String method, String message){
     log("ERROR : FCMService -> $method  : $message ");
   }
+}
+
+Future handleFcmMessage(RemoteMessage message,{String service = "BACKGROUND"})async{
+  log("HANDLING A $service MESSAGE : ${message.toMap()}");
+  
+  NotificationUtils.showNotification(
+    title: message.data['title'],
+    body: message.data['body'],
+    smallImage : message.data['smallImage'],
+    bigImage : message.data['bigImage'],
+  );
 }

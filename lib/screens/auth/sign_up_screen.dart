@@ -3,6 +3,7 @@ import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
@@ -114,7 +115,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         //Sign Up Successfull
                         await Get.delete<UserController>();
                         await UserPrefs.setToken(value: token);
-                        Get.offAll(()=>const SplashScreen());
+                        if(mounted){
+                          AppRouter.pushAndRemoveUntil(context, const SplashScreen());
+                        }
                       }
                     },
                     text: "Sign Up",

@@ -4,6 +4,7 @@ import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/sign_in_screen.dart';
 import 'package:adopt_us/screens/requests_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,7 +50,7 @@ class AppDrawer extends StatelessWidget {
               _DrawerTile(
                 onTap: (){
                   Navigator.pop(context);
-                  Get.to(()=>RequestsScreen());
+                  AppRouter.push(context, const RequestsScreen());
                 }, 
                 icon: Icons.pets,
                 title: "Requests",
@@ -59,16 +60,15 @@ class AppDrawer extends StatelessWidget {
               ? _DrawerTile(
                   onTap: ()async{
                     Navigator.pop(context);
-                    Get.to(()=>const SignInScreen());
+                    AppRouter.push(context, const SignInScreen());
                   }, 
                   icon: Icons.login,
                   title: "Sign In",
                 )
               : _DrawerTile(
                   onTap: ()async{
-                    await _userController.logOut();
-                    Get.offAll(()=>const SplashScreen());
-                    
+                    _userController.logOut();
+                    AppRouter.pushAndRemoveUntil(context, const SplashScreen());
                   }, 
                   icon: Icons.logout,
                   title: "Sign Out",

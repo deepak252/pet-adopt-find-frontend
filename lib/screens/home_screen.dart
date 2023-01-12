@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/create_pet_screen.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
+import 'package:adopt_us/services/fcm_service.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,17 +16,38 @@ import 'package:get/get.dart';
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({ Key? key }) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({ Key? key }) : super(key: key);
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin<HomeScreen>{
   final _petController = Get.put(PetController());
+
   final _userController = Get.put(UserController());
+
   final _requestController = Get.put(RequestController());
+  @override
+  void initState() {
+    super.initState();
+    updateFcm();
+  }
+
+  Future updateFcm()async{
+    final fcmToken =  await FCMService.getFcmToken();
+    _userController.updateProfile({
+      "fcmToken" : fcmToken
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     _petController.fetchSurrendedPets();
+
+    super.build(context);
     return Scaffold(
       body : Obx((){
         if(_petController.loadingSurrenderPets){
@@ -60,7 +85,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: Obx((){
         if(_userController.isSignedIn){
           return FloatingActionButton(
-            onPressed: ()=>Get.to(()=>const CreatePetScreen()),
+            onPressed: ()=>AppRouter.push(context, const CreatePetScreen()),
             child: const Icon(Icons.add),
           );
         }
@@ -68,6 +93,9 @@ class HomeScreen extends StatelessWidget {
       })
     );
   }
+
+  @override
+  bool get wantKeepAlive=>true;
 }
 
 
@@ -77,8 +105,8 @@ class PetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        Get.to(()=>SurrendedPetDetailsScreen(
+      onTap: ()async{
+        AppRouter.push(context, SurrendedPetDetailsScreen(
           pet: pet,
         ));
       },

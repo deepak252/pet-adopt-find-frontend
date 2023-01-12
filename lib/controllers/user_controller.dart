@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/services/user_service.dart';
@@ -55,6 +57,7 @@ class UserController extends GetxController{
     if(_token==null){
       return false;
     }
+    // log("${data}");
     final user = await UserService.updateProfile(
       token: _token!,
       data: data
@@ -71,6 +74,8 @@ class UserController extends GetxController{
     await UserPrefs.clearData();
     await Get.delete<UserController>();
     await Get.delete<BottomNavController>();
+    await Get.delete<RequestController>();
+    await Get.delete<PetController>();
   }
 
 }

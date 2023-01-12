@@ -6,6 +6,7 @@ import 'package:adopt_us/screens/find_screen.dart';
 import 'package:adopt_us/screens/home_screen.dart';
 import 'package:adopt_us/screens/notification_screen.dart';
 import 'package:adopt_us/screens/profile/user_profile_screen.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/widgets/app_drawer.dart';
 import 'package:adopt_us/widgets/custom_icon_button.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
                 if(index==0)
                   CustomIconButton(
                     onPressed: (){
-                      Get.to(()=>NotificationScreen());
+                      AppRouter.push(context, NotificationScreen());
                     },
                     icon: Icons.notifications_on_rounded,
                   )

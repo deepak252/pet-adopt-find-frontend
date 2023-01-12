@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:adopt_us/models/request.dart';
 import 'package:adopt_us/services/request_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
@@ -38,6 +40,7 @@ class RequestController extends GetxController{
     final requests = await RequestService.getRequestsReceived(
       token: _token!
     );
+    log("${requests}");
     _reqReceived(requests);
     if(enableLoading){
       _loadingReqReceived(false);

@@ -7,6 +7,7 @@ import 'package:adopt_us/screens/auth/sign_up_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
@@ -108,7 +109,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         await Get.delete<UserController>();
                         await Get.delete<BottomNavController>();
                         await UserPrefs.setToken(value: token);
-                        Get.offAll(()=>const SplashScreen());
+                        if(mounted){
+                          AppRouter.pushAndRemoveUntil(context, const SplashScreen());
+                        }
                       }
                     },
                     text: "Sign In",
@@ -120,7 +123,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   GestureDetector(
                     onTap: (){
                       unfocus(context);
-                      Get.to(()=>const SignUpScreen());
+                      AppRouter.push(context, const SignUpScreen());
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(4.0),

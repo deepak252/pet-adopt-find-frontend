@@ -54,7 +54,7 @@ abstract class HttpUtils{
   static Future<T?> get<T>({
     required String methodName,
     required String api,
-    required DebugUtils debug,
+    DebugUtils? debug,
     required SuccessCallback<T> onSuccess,
     VoidCallback? onError,
     String? token,
@@ -72,13 +72,13 @@ abstract class HttpUtils{
       );
       if(response.statusCode==200){
         final result = jsonDecode(response.body);
-        debug.message(methodName, result);
+        debug?.message(methodName, result);
         return await onSuccess(result);
       }else {
         throw response.body;
       }
     }catch(e,s){
-      debug.error(methodName, error: e,stackTrace: s);
+      debug?.error(methodName, error: e,stackTrace: s);
       try{
         final error =  jsonDecode(e.toString())['error'];
         CustomSnackbar.error(error: error);

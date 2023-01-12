@@ -7,6 +7,7 @@ import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/services/pet_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/utils/notification_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/not_signed_in.dart';
@@ -86,14 +87,14 @@ class UserProfileScreen extends StatelessWidget {
                   label: "My Pets",
                   icon: Icons.pets,
                   onTap: (){
-                    Get.to(()=>MyPetsScreen());
+                    AppRouter.push(context, MyPetsScreen());
                   }
                 ),
                 optionWidget(
                   label: "Edit Profile",
                   icon: Icons.edit,
                   onTap: (){
-                    Get.to(()=>EditUserProfileScreen());
+                    AppRouter.push(context, EditUserProfileScreen());
                   }
                 ),
                 

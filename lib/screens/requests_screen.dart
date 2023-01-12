@@ -3,9 +3,9 @@ import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/models/request.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/utils/text_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
-import 'package:adopt_us/widgets/custom_icon_button.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:adopt_us/widgets/selected_user_profile.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +13,16 @@ import 'package:get/get.dart';
 
 import 'package:adopt_us/widgets/cached_image_container.dart';
 
-class RequestsScreen extends StatelessWidget {
-  RequestsScreen({ Key? key }) : super(key: key);
+class RequestsScreen extends StatefulWidget {
+  const RequestsScreen({ Key? key }) : super(key: key);
 
+  @override
+  State<RequestsScreen> createState() => _RequestsScreenState();
+}
+
+class _RequestsScreenState extends State<RequestsScreen> {
   final _requestController = Get.put(RequestController());
 
- 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -242,7 +246,6 @@ class RequestsScreen extends StatelessWidget {
     );
   }
 
-
   Widget _requestMadeTile(Request request){
     return Padding(
       padding: const EdgeInsets.only(top: 6,left: 6,right: 6),
@@ -255,7 +258,7 @@ class RequestsScreen extends StatelessWidget {
           children: [            
             ListTile(
               onTap: (){
-                showUserProfile(request.requestedBy!);
+                showUserProfile(request.requestedTo!);
               },
               contentPadding: const EdgeInsets.all(6),
               shape: RoundedRectangleBorder(
@@ -302,7 +305,7 @@ class RequestsScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 4,),
                       Text(
-                        "${request.requestedBy?.mobile}",
+                        "${request.requestedTo?.mobile}",
                         style: const TextStyle(
                           fontSize: 14
                         ),
@@ -318,7 +321,7 @@ class RequestsScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 4,),
                       Text(
-                        "${request.requestedBy?.email}",
+                        "${request.requestedTo?.email}",
                         style: const TextStyle(
                           fontSize: 14
                         ),
@@ -331,7 +334,7 @@ class RequestsScreen extends StatelessWidget {
               
               leading: GestureDetector(
                 onTap: (){
-                  Get.to(()=>SurrendedPetDetailsScreen(pet: request.pet!));
+                  AppRouter.push(context, SurrendedPetDetailsScreen(pet: request.pet!));
                 },
                 child: CachedImageContainer(
                   imgUrl: request.pet?.photos[0]??'',
@@ -342,28 +345,28 @@ class RequestsScreen extends StatelessWidget {
               ),
             
             ),
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: OutlinedButton(
-                      onPressed: (){
+                Text("${request.createdAt}"),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlinedButton(
+                    onPressed: (){
 
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.all(12),
-                        side: const BorderSide(color: Colors.red),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.all(12),
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 18
-                        ),
+                      minimumSize: Size(double.infinity,0)
+                    ),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 18
                       ),
                     ),
                   ),
@@ -375,6 +378,4 @@ class RequestsScreen extends StatelessWidget {
       ),
     );
   }
-
- 
 }

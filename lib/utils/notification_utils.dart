@@ -32,10 +32,11 @@ class NotificationUtils{
     //     .getInitialNotificationAction(removeFromActionEvents: false);
   }
 
-  static Future<void> createNewNotification({
+  static Future<void> showNotification({
     required String title,
     String? body,
-    String? img
+    String? smallImage,
+    String? bigImage,
   }) async {
     _id++;
     await AwesomeNotifications().createNotification(
@@ -44,8 +45,8 @@ class NotificationUtils{
             channelKey: 'alerts',
             title: title,
             body: body,
-            bigPicture: img,
-            largeIcon: img,
+            bigPicture: bigImage,
+            largeIcon: smallImage,
             notificationLayout: NotificationLayout.BigPicture,
             // payload: {'notificationId': '1234567890'}
         ),
