@@ -1,11 +1,13 @@
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/services/location_utils.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class EditUserProfileScreen extends StatefulWidget {
@@ -23,6 +25,12 @@ class _EditUserProfileScreenState
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _addrLineController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _pincodeController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
   final _userController =Get.put(UserController());
 
@@ -48,11 +56,18 @@ class _EditUserProfileScreenState
     //     TextPosition(offset: _phoneController.text.length));
   }
 
+
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+
+    _addrLineController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _pincodeController.dispose();
+    _countryController.dispose();
     super.dispose();
   }
 
@@ -101,7 +116,7 @@ class _EditUserProfileScreenState
               if(!_formKey.currentState!.validate()){
                 return;
               }
-              customLoadingIndicator(context: context, dismissOnTap: false);
+              customLoadingIndicator(context: context, canPop: false);
               bool result = await _userController.updateProfile({
                 "fullName" : _nameController.text,
                 "email" : _emailController.text,
@@ -147,22 +162,85 @@ class _EditUserProfileScreenState
             validator: TextValidator.validatePhoneNumber,
             keyboardType: TextInputType.phone,
           ),
-          // Text(
-          //   "Address",
-          //   style: labelStyle,
-          // ),
-          // Obx((){
-          //   return CustomTextField(
-          //     hintText : AddressUtils.stringifyAddress(
-          //       address: _customerProfileController.getCurrentAddress
-          //     ),
-          //     enabled: false,
-          //     fillColor: Colors.white,
-          //     borderColor: Constants.kTextColor.withOpacity(0.3),
-          //     textColor: Constants.kTextColor.withOpacity(0.5),
-          //     maxLines: 5,
-          //   );
-          // }),
+          const SizedBox(height: 18,),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Address",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              InkWell(
+                onTap: ()async{
+                  customLoadingIndicator(context: context, canPop: false);
+                  final location =await LocationUtils.getCurrentLocation();
+                  if(mounted){
+                    Navigator.pop(context);
+                    if(location!=null){
+                      setState(() {
+                        _addrLineController.text=(location.name??'') +', '+ (location.sublocality??'');
+                        _cityController.text=location.city??'';
+                        _stateController.text=location.state??'';
+                        _countryController.text=location.country??'';
+                        _pincodeController.text=location.pincode??'';
+                      });
+
+                    }
+                  }
+
+
+
+                },
+                child: Text(
+                  "Use Current Location",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    color: Themes.colorSecondary
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 12,),
+          CustomTextField(
+            controller: _addrLineController,
+            hintText: " Address Line",
+            validator: TextValidator.requiredText,
+            keyboardType: TextInputType.streetAddress,
+          ),
+          const SizedBox(height: 18,),
+          CustomTextField(
+            controller: _cityController,
+            hintText: " City",
+            validator: TextValidator.requiredText,
+          ),
+          const SizedBox(height: 18,),
+          CustomTextField(
+            controller: _stateController,
+            hintText: " State",
+            validator: TextValidator.requiredText,
+          ),
+          const SizedBox(height: 18,),
+          CustomTextField(
+            controller: _countryController,
+            hintText: " Country",
+            validator: TextValidator.requiredText,
+          ),
+          const SizedBox(height: 18,),
+          CustomTextField(
+            controller: _pincodeController,
+            hintText: " Pincode",
+            validator: TextValidator.requiredText,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+          ),
           
         ],
       ),

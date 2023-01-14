@@ -103,7 +103,7 @@ class _EditPetScreenState extends State<EditPetScreen> {
               if(_oldImages.isEmpty && _newImages.isEmpty){
                 return CustomSnackbar.error(error: "Upload Pet Image");
               }
-              customLoadingIndicator(context: context,dismissOnTap : false);
+              customLoadingIndicator(context: context,canPop : false);
               // Upload pet images to firebase
               var newImgUrls = await Future.wait(
                 _newImages.map((img)async{

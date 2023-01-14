@@ -6,20 +6,16 @@ import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/pet/my_pets_screen.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
-import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
-import 'package:adopt_us/services/pet_service.dart';
-import 'package:adopt_us/storage/user_prefs.dart';
+import 'package:adopt_us/services/location_utils.dart';
 import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/utils/file_utils.dart';
-import 'package:adopt_us/utils/notification_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_cropper/image_cropper.dart';
 
 class UserProfileScreen extends StatelessWidget {
   UserProfileScreen({ Key? key }) : super(key: key);
@@ -47,6 +43,7 @@ class UserProfileScreen extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    //Profile Pic
                     Stack(
                       alignment: Alignment.topRight,
                       children: [
@@ -70,7 +67,7 @@ class UserProfileScreen extends StatelessWidget {
                             }
                             final croppedImage = await FileUtils.cropImage(pickedImage);
                             if(croppedImage==null) return;
-                            customLoadingIndicator(context: context);
+                            customLoadingIndicator(context: context,canPop: false);
                             final newImgUrl = await FirebaseStorageService.uploadFile(
                                 file : croppedImage,
                                 fileName: FileUtils.getFileNameFromPath(croppedImage.path)??'',
@@ -170,6 +167,28 @@ class UserProfileScreen extends StatelessWidget {
                 //     //   title: "Test",
                 //     //   img: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png'
                 //     // );
+                //   }
+                // ),
+
+                // optionWidget(
+                //   label: "Address",
+                //   icon: Icons.location_city,
+                //   onTap: ()async{
+                //     final location =await LocationUtils.getCurrentLocation();
+                //     // final location =await LocationUtils.getAddressFromCoordinaties(
+                //     //   28.6691,77.0929
+                //     // );
+                //     if(location!=null){
+                //       log('''
+                //         ${location.name},
+                //         ${location.sublocality},
+                //         ${location.city},
+                //         ${location.state},
+                //         ${location.country},
+                //         ${location.longitude},
+                //         ${location.latitude},
+                //       ''');
+                //     }
                 //   }
                 // ),
                

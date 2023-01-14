@@ -101,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if(!_formkey.currentState!.validate()){
                         return;
                       }
-                      customLoadingIndicator(context: context,dismissOnTap: false);
+                      customLoadingIndicator(context: context,canPop: false);
                       final token = await AuthService.signUp(
                         name: _nameController.text, 
                         email: _emailController.text, 

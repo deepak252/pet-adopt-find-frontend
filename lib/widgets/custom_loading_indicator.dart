@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 
 void customLoadingIndicator({
   required BuildContext context,
-  bool dismissOnTap = true
+  bool canPop = true
 }){
   showDialog(
     context: context, 
     builder: (_)=>WillPopScope(
-      onWillPop: () async => dismissOnTap,
+      onWillPop: () async => canPop,
       child: const Center(child: CircularProgressIndicator(
         color: Themes.colorSecondary,
       )),

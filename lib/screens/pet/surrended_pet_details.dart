@@ -137,7 +137,7 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
             if(pet.user?.userId == _userController.user?.userId){
               return CustomElevatedButton(
                 onPressed: ()async{
-                  // customLoadingIndicator(context: context,dismissOnTap: false);
+                  // customLoadingIndicator(context: context,canPop: false);
                   // bool res =await  _requestController.sendAdoptRequest(pet.petId.toString());
                   // Navigator.pop(context);
                   // if(res){
@@ -157,7 +157,7 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
             }
             return  CustomElevatedButton(
               onPressed: ()async{
-                customLoadingIndicator(context: context,dismissOnTap: false);
+                customLoadingIndicator(context: context,canPop: false);
                 bool res =await  _requestController.sendAdoptRequest(pet.petId.toString());
                 Navigator.pop(context);
                 if(res){

@@ -10,6 +10,11 @@ class TextValidator {
     return null;
   }
 
+  static String? requiredText(String? value) {
+    if (value == null || value.trim() == '') return 'This field is required';
+    return null;
+  }
+
 
   static String? validateEmail(String? value) {
     String pattern =

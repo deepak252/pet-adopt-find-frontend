@@ -82,7 +82,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               if(!_userController.isSignedIn){
                 return CustomSnackbar.error(error: "Not Signed In");
               }
-              customLoadingIndicator(context: context,dismissOnTap : false);
+              customLoadingIndicator(context: context,canPop : false);
               //Upload pet images to firebase
               var imgUrls = await Future.wait(
                 _petImages.map((img)async{

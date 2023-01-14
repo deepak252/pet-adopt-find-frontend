@@ -96,7 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       if(!_formkey.currentState!.validate()){
                         return;
                       }
-                      customLoadingIndicator(context: context,dismissOnTap: false);
+                      customLoadingIndicator(context: context,canPop: false);
                       final token = await AuthService.signIn(
                         email: _emailController.text, 
                         password: _passwordController.text
