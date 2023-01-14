@@ -4,6 +4,6 @@ class PetStatus{
   // static const missing= "missing";
   static const abandoned= "abandoned";
 
-  static List<String> get getList => [surrender,abandoned];
+  static List<String> get list => [surrender,abandoned];
   
 }

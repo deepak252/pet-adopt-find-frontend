@@ -5,21 +5,26 @@ import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:get/get.dart';
 
 class PetController extends GetxController{
+
   final _loadingAllPets = false.obs;
   bool get loadingAllPets => _loadingAllPets.value;
-  final _loadingAbondonedPets = false.obs;
-  bool get loadingAbondonedPets => _loadingAbondonedPets.value;
-  final _loadingSurrenderPets = false.obs;
-  bool get loadingSurrenderPets => _loadingSurrenderPets.value;
-
   final  _allPets = Rxn<List<Pet>>();
   List<Pet> get allPets => _allPets.value??[];
 
+  final _loadingAbondonedPets = false.obs;
+  bool get loadingAbondonedPets => _loadingAbondonedPets.value;
   final  _abandonedPets = Rxn<List<Pet>>();
   List<Pet> get abandonedPets => _abandonedPets.value??[];
 
+  final _loadingSurrenderPets = false.obs;
+  bool get loadingSurrenderPets => _loadingSurrenderPets.value;
   final  _surrenderedPets = Rxn<List<Pet>>();
   List<Pet> get surrenderedPets => _surrenderedPets.value??[];
+
+  final _loadingMyPets = false.obs;
+  bool get loadingMyPets => _loadingMyPets.value;
+  final  _myPets = Rxn<List<Pet>>();
+  List<Pet> get myPets => _myPets.value??[];
   
   
   final _token = UserPrefs.token;
@@ -29,6 +34,7 @@ class PetController extends GetxController{
     // fetchAllPets(enableLoading: true);
     fetchAbondonedPets(enableLoading: true);
     fetchSurrendedPets(enableLoading: true);
+    fetchMyPets(enableLoading: true);
     super.onInit();
   }
 
@@ -60,6 +66,24 @@ class PetController extends GetxController{
       fetchAllPets();
       fetchSurrendedPets();
       fetchAbondonedPets();
+      return result;
+    }
+    return false;
+  }
+
+  Future<bool> editPet(Map<String,dynamic> data)async{
+    if(_token==null){
+      return false;
+    }
+    final result = await PetService.editPet(
+      token: _token!,
+      data: data
+    );
+    if(result!=null){
+      fetchAllPets();
+      fetchSurrendedPets();
+      fetchAbondonedPets();
+      fetchMyPets();
       return result;
     }
     return false;
@@ -97,6 +121,22 @@ class PetController extends GetxController{
       _loadingAbondonedPets(false);
     }
     
+  }
+
+  Future fetchMyPets({bool enableLoading = false})async{
+    if(loadingMyPets || _token==null){
+      return;
+    }
+    if(enableLoading){
+      _loadingMyPets(true);
+    }
+    final pets = await PetService.getMyPets(token: _token!);
+    if(pets!=null){
+      _myPets(pets);
+    }
+    if(enableLoading){
+      _loadingMyPets(false);
+    }
   }
 
 

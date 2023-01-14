@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/splash_screen.dart';
+import 'package:adopt_us/utils/notification_utils.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 
@@ -13,11 +15,13 @@ import 'firebase_options.dart';
 void main() async{
   try {
     WidgetsFlutterBinding.ensureInitialized();
-    await GetStorage.init();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await NotificationUtils.initializeLocalNotifications();
+    await GetStorage.init();
     await FCMService.init();
+    FirebaseMessaging.onBackgroundMessage(handleFcmMessage);
   } catch (e) {
     log("ERROR : Firebase Initialization Error , $e");
   }

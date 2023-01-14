@@ -9,7 +9,7 @@ class Request {
   Pet? pet;
   User? requestedBy;
   User? requestedTo;
-  DateTime? requestedAt;
+  DateTime? createdAt;
   
   Request({
     required this.requestId,
@@ -17,7 +17,7 @@ class Request {
     this.pet,
     this.requestedBy,
     this.requestedTo,
-    this.requestedAt
+    this.createdAt
   });
 
   factory Request.fromJson(Map<String, dynamic> json) => Request(
@@ -26,7 +26,7 @@ class Request {
     pet: Pet.fromJson(jsonDecode(json["pet"])),
     requestedBy: User.fromJson(jsonDecode(json["requestedBy"])),
     requestedTo: User.fromJson(jsonDecode(json["requestedTo"])),
-    requestedAt: DateTime.tryParse(json["requestedAt"]??''),
+    createdAt: DateTime.tryParse(json["createdAt"]??''),
   );
 
   Map<String, dynamic> toJson() => {
@@ -35,7 +35,7 @@ class Request {
     "pet" : pet?.toJson(),
     "requestedBy" : requestedBy?.toJson(),
     "requestedTo" : requestedTo?.toJson(),
-    "requestedAt": requestedAt?.toIso8601String(),
+    "createdAt": createdAt?.toIso8601String(),
   };
 
   Request copyWith({
@@ -44,7 +44,7 @@ class Request {
     Pet? pet,
     User? requestedBy,
     User? requestedTo,
-    DateTime? requestedAt,
+    DateTime? createdAt,
   }) {
     return Request(
       requestId: requestId ?? this.requestId,
@@ -52,7 +52,7 @@ class Request {
       pet : pet??this.pet,
       requestedBy : requestedBy??this.requestedBy,
       requestedTo : requestedTo??this.requestedTo,
-      requestedAt: requestedAt ?? this.requestedAt,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

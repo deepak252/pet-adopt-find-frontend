@@ -1,6 +1,7 @@
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/pet/abondoned_pet_details.dart';
+import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
@@ -109,9 +110,10 @@ class _AbondonedPet extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Get.to(()=>AbondonedPetDetailsScreen(
+        AppRouter.push(context, AbondonedPetDetailsScreen(
           pet: pet,
         ));
+        
       },
       child: Container(
         color: Colors.transparent,

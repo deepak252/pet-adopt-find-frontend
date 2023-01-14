@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:adopt_us/utils/notification_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +18,6 @@ class FCMService {
   static Future init()async{
     
     await _messaging.subscribeToTopic("stelonotification");
-    
     await _messaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
@@ -25,32 +25,12 @@ class FCMService {
     );
 
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message)async {
-      _logMessage("Handling a Foreground message", message.toMap());
-      final data = message.data;
-      // NotificationUtils.showNotification(
-      //   title: data['title'],
-      //   desc: data['body'],
-      // );
-     
-    });
-
-  }
-
-  static Future sendMessage ({
-    required String receiverFcm,
-    required String data
-  })async{
-    await _messaging.sendMessage(
-      to: receiverFcm,
-      data: {
-        "hellow" : data
-      },
-      collapseKey: "1",
-      messageId: "2",
-      messageType: "3"
+    FirebaseMessaging.onMessage.listen(
+      (message)=>handleFcmMessage(message,service: "FOREGROUND")
     );
+
   }
+
   //Only for testing
   static Future sendNotification({
     required String fcmToken,
@@ -62,7 +42,7 @@ class FCMService {
           await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
             headers: {
               "Content-Type": "application/json",
-              "Authorization":  "key=AAAADp_RBHg:APA91bHgdrOZ20nLvM1CyGg-I4L-gaMZtG2gn8_ma-9rfmBxgYzO_vld_52H5J2ZJ0agjTT7fQGUcCSpAeSMq721FFJbvbsa5bUUpLl552y7ISbuE0egoN3Auvx9R-uTf85QTNO7lBnq"
+              "Authorization":  "key=AAAAl-pRoxo:APA91bHS0Hir-Ctvql4m5UI_fX4kJlCyGhJS7BHp6KNVUVAphg3XF0EQtRVscLjpX7pL-HobUgZa21EwhTZPwH4i4qsUdTcQfsa1vPYqUdoATPU7hfEtLYLisPDNB6ePSbNJSD6waahl"
             },
             body: jsonEncode({
               "to": fcmToken,
@@ -96,4 +76,15 @@ class FCMService {
   static void _logError(String method, String message){
     log("ERROR : FCMService -> $method  : $message ");
   }
+}
+
+Future handleFcmMessage(RemoteMessage message,{String service = "BACKGROUND"})async{
+  log("HANDLING A $service MESSAGE : ${message.toMap()}");
+  
+  NotificationUtils.showNotification(
+    title: message.data['title'],
+    body: message.data['body'],
+    smallImage : message.data['smallImage'],
+    bigImage : message.data['bigImage'],
+  );
 }

@@ -8,7 +8,43 @@ import 'package:adopt_us/utils/http_utils.dart';
 
 abstract class PetService{
   static final _debug = DebugUtils("PetService");
- 
+
+  static Future<bool?> createPet({
+    required String token,
+    required Map<String,dynamic> data
+  }) async {
+    return await HttpUtils.post(
+      methodName: "createPet", 
+      token: token,
+      api: ApiPath.createPet,
+      payload: data,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return true;
+        }
+      },
+      debug: _debug,
+    );
+  }
+
+  static Future<bool?> editPet({
+    required String token,
+    required Map<String,dynamic> data
+  }) async {
+    return await HttpUtils.put(
+      methodName: "editPet", 
+      token: token,
+      api: ApiPath.editPet,
+      payload: data,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return true;
+        }
+      },
+      debug: _debug,
+    );
+  }
+
   static Future<List<Pet>?> getAllPets() async {
     return await HttpUtils.get(
       methodName: "getAllPets", 
@@ -27,25 +63,30 @@ abstract class PetService{
         }
         return null;
       },
-      debug: _debug,
+      // debug: _debug,
     );
   }
 
-  static Future<bool?> createPet({
-    required String token,
-    required Map<String,dynamic> data
-  }) async {
-    return await HttpUtils.post(
-      methodName: "createPet", 
+  static Future<List<Pet>?> getMyPets({required String token}) async {
+    return await HttpUtils.get(
+      methodName: "getMyPets", 
+      api: ApiPath.myPets,
       token: token,
-      api: ApiPath.createPet,
-      payload: data,
       onSuccess: (res)async{
         if(res?['data']!=null){
-          return true;
+          List<Pet> pets = [];
+          for(var petJson in res?['data']){
+            try{
+              pets.add(Pet.fromJson(petJson));
+            }catch(e,s){
+              _debug.error("getMyPets (Invalid json pet)", error: e, stackTrace: s);
+            }
+          }
+          return pets;
         }
+        return null;
       },
-      debug: _debug,
+      // debug: _debug,
     );
   }
 
@@ -67,7 +108,7 @@ abstract class PetService{
         }
         return null;
       },
-      debug: _debug,
+      // debug: _debug,
     );
   }
 

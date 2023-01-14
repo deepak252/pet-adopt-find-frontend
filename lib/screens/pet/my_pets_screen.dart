@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/create_pet_screen.dart';
+import 'package:adopt_us/screens/pet/my_pet_details.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
-import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/utils/app_router.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:flutter/material.dart';
@@ -16,86 +14,53 @@ import 'package:get/get.dart';
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({ Key? key }) : super(key: key);
+class MyPetsScreen extends StatelessWidget {
+  MyPetsScreen({ Key? key }) : super(key: key);
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin<HomeScreen>{
   final _petController = Get.put(PetController());
-
-  final _userController = Get.put(UserController());
-
-  final _requestController = Get.put(RequestController());
-  @override
-  void initState() {
-    super.initState();
-    updateFcm();
-  }
-
-  Future updateFcm()async{
-    final fcmToken =  await FCMService.getFcmToken();
-    _userController.updateProfile({
-      "fcmToken" : fcmToken
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    _petController.fetchMyPets();
     final orientation = MediaQuery.of(context).orientation;
-    _petController.fetchSurrendedPets();
-
-    super.build(context);
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("My Pets"),
+      ),
       body : Obx((){
-        if(_petController.loadingSurrenderPets){
+        if(_petController.loadingMyPets){
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        if(_petController.surrenderedPets.isEmpty){
+        if(_petController.myPets.isEmpty){
           return NoResultWidget(
             title: "No Pets Found!",
             onRefresh: ()async{
-              _petController.fetchSurrendedPets(enableLoading: true);
+              _petController.fetchMyPets(enableLoading: true);
             },
           );
         }
         return RefreshIndicator(
           onRefresh: ()async{
-            await _petController.fetchSurrendedPets(enableLoading: true);
+            await _petController.fetchMyPets(enableLoading: true);
           },
           child: GridView.builder(
-            itemCount: _petController.surrenderedPets.length,
+            itemCount: _petController.myPets.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
               childAspectRatio: 0.8
             ),
             itemBuilder: (BuildContext context, int index){
               return PetWidget(
-                pet: _petController.surrenderedPets[index],
+                pet: _petController.myPets[index],
               );
             },
           ),
         );
       }),
-     
-      floatingActionButton: Obx((){
-        if(_userController.isSignedIn){
-          return FloatingActionButton(
-            onPressed: ()=>AppRouter.push(context, const CreatePetScreen()),
-            child: const Icon(Icons.add),
-          );
-        }
-        return const SizedBox();
-      })
     );
   }
-
-  @override
-  bool get wantKeepAlive=>true;
 }
 
 
@@ -105,8 +70,8 @@ class PetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: ()async{
-        AppRouter.push(context, SurrendedPetDetailsScreen(
+      onTap: (){
+        AppRouter.push(context, MyPetDetails(
           pet: pet,
         ));
       },
@@ -171,16 +136,9 @@ class PetWidget extends StatelessWidget {
             },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
-              // child: Card(
-              //   child: Icon(
-              //     Icons.favorite_outline_outlined,
-              //     color: Themes.colorSecondary,
-              //   ),
-              // ),
               child: Icon(
                   Icons.favorite_outline_outlined,
                   color: Colors.redAccent,
-
                 ),
             ),
           ),

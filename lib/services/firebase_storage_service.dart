@@ -41,6 +41,16 @@ class FirebaseStorageService{
     }
     return null;
   }
+  /// List of Urls required
+  static Future deleteMultipleFiles({required List fileUrls})async{
+    for (var url in fileUrls) {
+      if(url!=null){
+        deleteFile(
+          fileUrl: url.toString()
+        );
+      }
+    }
+  }
 
   static void _logMessage(String method, String message){
     log("MESSAGE : FirebaseStorageService -> $method : $message ");

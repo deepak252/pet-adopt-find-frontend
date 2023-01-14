@@ -46,7 +46,7 @@ abstract class RequestService{
         }
         return null;
       },
-      debug: _debug,
+      // debug: _debug,
     );
   }
 
@@ -69,7 +69,7 @@ abstract class RequestService{
         }
         return null;
       },
-      debug: _debug,
+      // debug: _debug,
     );
   }
  
