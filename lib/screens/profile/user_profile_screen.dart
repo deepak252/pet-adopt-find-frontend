@@ -1,18 +1,25 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/pet/my_pets_screen.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/services/fcm_service.dart';
+import 'package:adopt_us/services/firebase_storage_service.dart';
 import 'package:adopt_us/services/pet_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/utils/notification_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
+import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class UserProfileScreen extends StatelessWidget {
   UserProfileScreen({ Key? key }) : super(key: key);
@@ -28,7 +35,6 @@ class UserProfileScreen extends StatelessWidget {
           return const NotSignedIn();
         }
         final user  = _userController.user!;
-        // log("${user.profilePic.runtimeType}");
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -41,10 +47,65 @@ class UserProfileScreen extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CachedImageContainer(
-                      imgUrl: user.profilePic??Constants.defaultPic,
-                      height: 100,
-                      width: 100,
+                    Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: CachedImageContainer(
+                            imgUrl: user.profilePic??Constants.defaultPic,
+                            height: 100,
+                            width: 100,
+                          )
+                        ),
+                        InkWell(
+                          onTap: ()async{
+                            final pickedImage = await FileUtils.pickImageFromGallery();
+                            if(pickedImage==null) return;
+                            // log("File : ${pickedImage.path}. size ${FileUtils.fileSizeKB(pickedImage)} KB");
+                            if(FileUtils.fileSizeKB(pickedImage)>2048){
+                              return CustomSnackbar.error(
+                                error: "Image size can't be greater than 2Mb."
+                              );
+                            }
+                            final croppedImage = await FileUtils.cropImage(pickedImage);
+                            if(croppedImage==null) return;
+                            customLoadingIndicator(context: context);
+                            final newImgUrl = await FirebaseStorageService.uploadFile(
+                                file : croppedImage,
+                                fileName: FileUtils.getFileNameFromPath(croppedImage.path)??'',
+                                path: StoragePath.profilePic
+                            );
+                            Navigator.pop(context);
+                            if(newImgUrl==null){
+                              return CustomSnackbar.error(
+                                error: "Couldn't update profile pic. Try again later."
+                              );
+                            }
+                            final oldImgUrl = user.profilePic??'';
+                            _userController.updateProfile({
+                              'profilePic' : newImgUrl
+                            }).then((success){
+                              if(success){
+                                //remove old pic from storage
+                                FirebaseStorageService.deleteFile(fileUrl: oldImgUrl);
+                              }else{
+                                // api error : remove new pic from storage
+                                FirebaseStorageService.deleteFile(fileUrl: newImgUrl);
+                              }
+                            });
+                          },
+                          child: CircleAvatar(
+                            radius: 12,
+                            backgroundColor: Themes.colorPrimary.withOpacity(0.7),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                     const SizedBox(width: 12,),
                     Flexible(
