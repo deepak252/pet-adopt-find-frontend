@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/utils/debug_utils.dart';
+import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,7 +28,7 @@ class FileUtils {
     return null;
   }
 
-  /// Open image gallery and pick an image
+  /// Pick image gallery
   static Future<File?> pickImageFromGallery({int imageQuality=60}) async {
     try {
       final image = await ImagePicker().pickImage(
@@ -49,6 +50,7 @@ class FileUtils {
       final croppedImg = await ImageCropper().cropImage(
         sourcePath: imgFile.path,
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        compressQuality: 80,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,
@@ -83,6 +85,25 @@ class FileUtils {
       _debug.error("getFileExtensionFromPath",error: e,stackTrace: s);
     }
     return null;
+  }
+
+  /// Pick image gallery and Crop
+  static Future<File?> pickAndCropImage({int imageQuality=60}) async {
+    final pickedImage = await FileUtils.pickImageFromGallery();
+    if(pickedImage==null){
+      return null;
+    }
+    // log("Picked File : ${pickedImage.path}. size ${FileUtils.fileSizeKB(pickedImage)} KB");
+    if(FileUtils.fileSizeKB(pickedImage)>2048){
+      CustomSnackbar.error(
+        error: "Image size can't be greater than 2Mb."
+      );
+      return null;
+    }
+    final croppedImage = await FileUtils.cropImage(pickedImage);
+    // log("Cropped File : ${croppedImage.path}. size ${FileUtils.fileSizeKB(croppedImage)} KB");
+    return croppedImage;
+    
   }
 
   static String? getFileNameFromPath(String filePath) {

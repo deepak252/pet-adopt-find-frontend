@@ -104,7 +104,7 @@ abstract class Themes{
         borderRadius: BorderRadius.circular(8)
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
+        borderSide: const BorderSide(
           color: Themes.colorSecondary, 
           width: 1.0,
         ),

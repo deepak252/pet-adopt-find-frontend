@@ -40,7 +40,7 @@ class RequestController extends GetxController{
     final requests = await RequestService.getRequestsReceived(
       token: _token!
     );
-    log("${requests}");
+    log("$requests");
     _reqReceived(requests);
     if(enableLoading){
       _loadingReqReceived(false);

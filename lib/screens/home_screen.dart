@@ -7,7 +7,7 @@ import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/create_pet_screen.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
 import 'package:adopt_us/services/fcm_service.dart';
-import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
       floatingActionButton: Obx((){
         if(_userController.isSignedIn){
           return FloatingActionButton(
-            onPressed: ()=>AppRouter.push(context, const CreatePetScreen()),
+            onPressed: ()=>AppNavigator.push(context, const CreatePetScreen()),
             child: const Icon(Icons.add),
           );
         }
@@ -106,7 +106,7 @@ class PetWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: ()async{
-        AppRouter.push(context, SurrendedPetDetailsScreen(
+        AppNavigator.push(context, SurrendedPetDetailsScreen(
           pet: pet,
         ));
       },

@@ -10,12 +10,21 @@ abstract class CustomSnackbar{
     );
   }
 
+  static void success({required Object msg, int durationMS=4000}){
+    snackbar(
+      message: msg.toString(),
+      duration: Duration(milliseconds: durationMS),
+      bgColor: Colors.green,
+      titleColor: Colors.white,
+      messageColor : Colors.white
+    );
+  }
+
   static void error({required Object error, int durationMS=4000}){
     snackbar(
       message: error.toString(),
       duration: Duration(milliseconds: durationMS),
       bgColor: const Color(0xFFf25746)
-      // bgColor: const Color(0xFFE51C22)
     );
   }
 

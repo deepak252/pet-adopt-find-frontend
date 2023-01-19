@@ -28,8 +28,8 @@ class Address {
         state: json["state"],
         country: json["country"],
         pincode: json["pincode"],
-        latitude: double.tryParse(json["latitude"]),
-        longitude: double.tryParse(json["longitude"]),
+        latitude: double.tryParse(json["latitude"]??''),
+        longitude: double.tryParse(json["longitude"]??''),
     );
 
     Map<String, dynamic> toJson() => {
