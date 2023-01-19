@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'package:adopt_us/config/image_path.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/find_screen.dart';
 import 'package:adopt_us/screens/home_screen.dart';
 import 'package:adopt_us/screens/notification_screen.dart';
+import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/screens/profile/user_profile_screen.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/app_drawer.dart';
@@ -21,7 +23,21 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final _bottomNavController = Get.put(BottomNavController());
+  final _userController = Get.put(UserController());
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(_userController.isSignedIn && !_userController.validateUser){
+        AppNavigator.push(context, const EditUserProfileScreen(
+          canPop: false,
+        ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -18,6 +18,23 @@ class UserController extends GetxController{
   bool get isSignedIn => user!=null;
   
   final _token = UserPrefs.token;
+
+  bool get validateUser{
+    log("ProfileController, Validate User");
+    if(user!=null){
+      final user=this.user!;
+      return !(user.fullName==null || user.fullName!.trim() == '' ||
+        user.email==null || user.email!.trim() == '' ||
+        user.mobile==null || user.mobile!.trim() == '' ||
+        user.address?.addressLine==null || user.address?.addressLine?.trim() == '' ||
+        user.address?.city==null || user.address?.city?.trim() == '' ||
+        user.address?.country==null || user.address?.country?.trim() == '' ||
+        user.address?.pincode==null || user.address?.pincode?.trim() == '' ||
+        user.address?.latitude==null || user.address?.longitude==null
+      );
+    }
+    return false;
+  }
   
   @override
   void onInit() {

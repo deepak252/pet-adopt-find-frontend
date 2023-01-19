@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:adopt_us/models/location.dart';
+import 'package:adopt_us/models/geo_location.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -34,12 +34,12 @@ class LocationUtils{
         desiredAccuracy: LocationAccuracy.high);
   }
 
-  static Future<LocationModel> getAddressFromCoordinaties(double latitude, double longitude) async {
+  static Future<GeoLocation> getAddressFromCoordinaties(double latitude, double longitude) async {
     List<Placemark> placemarks = await GeocodingPlatform.instance
         .placemarkFromCoordinates(latitude, longitude);
 
     Placemark place = placemarks[0];
-    LocationModel location = LocationModel(
+    GeoLocation location = GeoLocation(
       name: place.name??'',
       sublocality: place.subLocality??'',
       city: place.locality ?? '',
@@ -53,9 +53,8 @@ class LocationUtils{
   }
 
   //Get device location
-  static Future<LocationModel?> getCurrentLocation() async {
+  static Future<GeoLocation?> getCurrentLocation() async {
     try {
-
       Position position = await getGeoLocationPosition();
       // final location = 'Lat: ${position.latitude} , Long: ${position.longitude}';
       final location = await getAddressFromCoordinaties(

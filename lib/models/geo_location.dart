@@ -1,5 +1,5 @@
 
-class LocationModel {
+class GeoLocation {
   final String? name;
   final String? sublocality;
   final String? state;
@@ -9,7 +9,7 @@ class LocationModel {
   final double longitude;
   final double latitude;
 
-  LocationModel({
+  GeoLocation({
     this.name,
     this.sublocality,
     this.state, 

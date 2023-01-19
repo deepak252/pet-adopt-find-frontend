@@ -42,4 +42,5 @@ class Address {
         "latitude": latitude,
         "longitude": longitude,
     };
+
 }

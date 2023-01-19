@@ -5,13 +5,15 @@ import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
+import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class EditUserProfileScreen extends StatefulWidget {
-  EditUserProfileScreen({Key? key}) : super(key: key);
+  final bool canPop;
+  const EditUserProfileScreen({Key? key, this.canPop=true}) : super(key: key);
 
   @override
   _EditUserProfileScreenState createState() =>
@@ -36,11 +38,6 @@ class _EditUserProfileScreenState
 
   final _userController =Get.put(UserController());
 
-  // final TextStyle labelStyle = TextStyle(
-  //   color: Constants.kTextColor.withOpacity(0.8),
-  //   fontSize: Device.height * 0.018,
-  // );
-
   @override
   void initState() {
     initControllers();
@@ -62,11 +59,7 @@ class _EditUserProfileScreenState
       _latController.text = user.address?.latitude?.toString()??"";
       _lngController.text = user.address?.longitude?.toString()??"";
     }
-    
-    // _nameController.selection = TextSelection.fromPosition(
-    //     TextPosition(offset: _nameController.text.length));
-    // _phoneController.selection = TextSelection.fromPosition(
-    //     TextPosition(offset: _phoneController.text.length));
+ 
   }
 
 
@@ -88,72 +81,85 @@ class _EditUserProfileScreenState
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => unfocus(context),
-      child: Scaffold(
-        backgroundColor: Themes.backgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(
-            "Edit Profile",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 8,
-                ),
-                editProfileForm(),
-                const SizedBox(
-                  height: 100,
-                ),
-              ],
+    return WillPopScope(
+      onWillPop: (){
+        if(!widget.canPop){
+          CustomSnackbar.error(error: "Please Complete Your Profile");
+        }
+        return Future.value(widget.canPop);
+      },
+      child: GestureDetector(
+        onTap: () => unfocus(context),
+        child: Scaffold(
+          backgroundColor: Themes.backgroundColor,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              widget.canPop
+              ?  "Edit Profile"
+              : "Complete Your Profile",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                if(!widget.canPop){
+                  return CustomSnackbar.error(error: "Please Complete Your Profile");
+                }
+                Navigator.pop(context);
+              },
             ),
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: CustomElevatedButton(
-            onPressed: ()async {
-              unfocus(context);
-              if(!_formKey.currentState!.validate()){
-                return;
-              }
-              customLoadingIndicator(context: context, canPop: false);
-              bool result = await _userController.updateProfile({
-                "fullName" : _nameController.text,
-                "email" : _emailController.text,
-                "mobile" : _phoneController.text,
-                "addressLine" : _addrLineController.text,
-                "city" : _cityController.text,
-                "state" : _stateController.text,
-                "country" : _countryController.text,
-                "pincode" : _pincodeController.text,
-                "latitude" : double.parse(_latController.text),
-                "longitude" : double.parse(_latController.text),
-              });
-              if(mounted){
-                Navigator.pop(context); //Dismiss loading indicator
-                if(result){
-                  Navigator.pop(context);
-                }
-              }
-            },
-            text: "Save",
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  editProfileForm(),
+                  const SizedBox(
+                    height: 100,
+                  ),
+                ],
+              ),
+            ),
           ),
-        )
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: CustomElevatedButton(
+              onPressed: ()async {
+                unfocus(context);
+                if(!_formKey.currentState!.validate()){
+                  return;
+                }
+                customLoadingIndicator(context: context, canPop: false);
+                bool result = await _userController.updateProfile({
+                  "fullName" : _nameController.text,
+                  "email" : _emailController.text,
+                  "mobile" : _phoneController.text,
+                  "addressLine" : _addrLineController.text,
+                  "city" : _cityController.text,
+                  "state" : _stateController.text,
+                  "country" : _countryController.text,
+                  "pincode" : _pincodeController.text,
+                  "latitude" : double.parse(_latController.text),
+                  "longitude" : double.parse(_latController.text),
+                });
+                if(mounted){
+                  Navigator.pop(context); //Dismiss loading indicator
+                  if(result){
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              text: "Save",
+            ),
+          )
+        ),
       ),
     );
   }
@@ -167,20 +173,20 @@ class _EditUserProfileScreenState
         children: [
           CustomTextField(
             controller: _nameController,
-            hintText: " Name",
+            hintText: " Name*",
             validator: TextValidator.validateName,
           ),
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _emailController,
-            hintText: " Email",
+            hintText: " Email*",
             validator: TextValidator.validateEmail,
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _phoneController,
-            hintText: " Phone",
+            hintText: " Phone*",
             validator: TextValidator.validatePhoneNumber,
             keyboardType: TextInputType.phone,
           ),
@@ -215,10 +221,8 @@ class _EditUserProfileScreenState
                     }
                   }
 
-
-
                 },
-                child: Text(
+                child: const Text(
                   "Use Current Location",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -233,32 +237,31 @@ class _EditUserProfileScreenState
           const SizedBox(height: 12,),
           CustomTextField(
             controller: _addrLineController,
-            hintText: " Address Line",
+            hintText: " Address Line*",
             validator: TextValidator.requiredText,
             keyboardType: TextInputType.streetAddress,
           ),
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _cityController,
-            hintText: " City",
+            hintText: " City*",
             validator: TextValidator.requiredText,
           ),
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _stateController,
             hintText: " State",
-            validator: TextValidator.requiredText,
           ),
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _countryController,
-            hintText: " Country",
+            hintText: " Country*",
             validator: TextValidator.requiredText,
           ),
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _pincodeController,
-            hintText: " Pincode",
+            hintText: " Pincode*",
             validator: TextValidator.requiredText,
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
@@ -268,7 +271,7 @@ class _EditUserProfileScreenState
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _latController,
-            hintText: " Latitude",
+            hintText: " Latitude*",
             validator: TextValidator.requiredText,
             keyboardType: TextInputType.number,
            
@@ -276,7 +279,7 @@ class _EditUserProfileScreenState
           const SizedBox(height: 18,),
           CustomTextField(
             controller: _lngController,
-            hintText: " Longitude",
+            hintText: " Longitude*",
             validator: TextValidator.requiredText,
             keyboardType: TextInputType.number,
            
