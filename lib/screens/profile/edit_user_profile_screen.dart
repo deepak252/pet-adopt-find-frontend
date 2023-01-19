@@ -31,6 +31,8 @@ class _EditUserProfileScreenState
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _pincodeController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lngController = TextEditingController();
 
   final _userController =Get.put(UserController());
 
@@ -46,9 +48,20 @@ class _EditUserProfileScreenState
   }
 
   void initControllers() {
-    _nameController.text = _userController.user?.fullName??'';
-    _phoneController.text = _userController.user?.mobile??'';
-    _emailController.text = _userController.user?.email??'';
+    final user = _userController.user!;
+    _nameController.text = user.fullName??'';
+    _phoneController.text = user.mobile??'';
+    _emailController.text = user.email??'';
+
+    if(user.address!=null){
+      _addrLineController.text = user.address?.addressLine??"";
+      _cityController.text = user.address?.city??"";
+      _stateController.text = user.address?.state??"";
+      _pincodeController.text = user.address?.pincode??"";
+      _countryController.text = user.address?.country??"";
+      _latController.text = user.address?.latitude?.toString()??"";
+      _lngController.text = user.address?.longitude?.toString()??"";
+    }
     
     // _nameController.selection = TextSelection.fromPosition(
     //     TextPosition(offset: _nameController.text.length));
@@ -68,6 +81,8 @@ class _EditUserProfileScreenState
     _stateController.dispose();
     _pincodeController.dispose();
     _countryController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
     super.dispose();
   }
 
@@ -120,7 +135,14 @@ class _EditUserProfileScreenState
               bool result = await _userController.updateProfile({
                 "fullName" : _nameController.text,
                 "email" : _emailController.text,
-                "mobile" : _phoneController.text
+                "mobile" : _phoneController.text,
+                "addressLine" : _addrLineController.text,
+                "city" : _cityController.text,
+                "state" : _stateController.text,
+                "country" : _countryController.text,
+                "pincode" : _pincodeController.text,
+                "latitude" : double.parse(_latController.text),
+                "longitude" : double.parse(_latController.text),
               });
               if(mounted){
                 Navigator.pop(context); //Dismiss loading indicator
@@ -186,6 +208,8 @@ class _EditUserProfileScreenState
                         _stateController.text=location.state??'';
                         _countryController.text=location.country??'';
                         _pincodeController.text=location.pincode??'';
+                        _latController.text=location.latitude.toStringAsFixed(4);
+                        _lngController.text=location.longitude.toStringAsFixed(4);
                       });
 
                     }
@@ -240,6 +264,22 @@ class _EditUserProfileScreenState
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly
             ],
+          ),
+          const SizedBox(height: 18,),
+          CustomTextField(
+            controller: _latController,
+            hintText: " Latitude",
+            validator: TextValidator.requiredText,
+            keyboardType: TextInputType.number,
+           
+          ),
+          const SizedBox(height: 18,),
+          CustomTextField(
+            controller: _lngController,
+            hintText: " Longitude",
+            validator: TextValidator.requiredText,
+            keyboardType: TextInputType.number,
+           
           ),
           
         ],

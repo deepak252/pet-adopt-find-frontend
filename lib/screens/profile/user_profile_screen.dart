@@ -130,12 +130,35 @@ class UserProfileScreen extends StatelessWidget {
                               fontSize: 14
                             ),
                           ),
+                          if(user.address!=null)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${user.address!.addressLine}"*5,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Themes.colorBlack.withOpacity(0.5),
+
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  "${user.address!.state}-${user.address!.pincode}, ${user.address!.country}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Themes.colorBlack.withOpacity(0.5)
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 100,),
+                SizedBox(height: 60,),
                 Divider(),
                 optionWidget(
                   label: "Settings",
