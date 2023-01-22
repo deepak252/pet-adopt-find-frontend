@@ -41,6 +41,7 @@ class ChatSocketService{
           ApiPath.baseUrl,
           IO.OptionBuilder()
               .setTransports(['websocket'])
+              .setExtraHeaders({'Connection': 'upgrade', 'Upgrade': 'websocket'})
               .disableAutoConnect()
               .build());
         
