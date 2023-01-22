@@ -1,11 +1,9 @@
 
 import 'package:adopt_us/config/constants.dart';
-import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/custom_icon_button.dart';
 import 'package:adopt_us/widgets/custom_snack_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';

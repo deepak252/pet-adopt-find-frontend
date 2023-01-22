@@ -96,7 +96,10 @@ class PetController extends GetxController{
     if(enableLoading){
       _loadingSurrenderPets(true);
     }
-    final pets = await PetService.getPetsByStatus(status: PetStatus.surrender);
+    final pets = await PetService.getPetsByStatus(
+      token: _token??'',
+      status: PetStatus.surrender
+    );
     if(pets!=null){
       _surrenderedPets(pets);
     }
@@ -113,7 +116,10 @@ class PetController extends GetxController{
     if(enableLoading){
       _loadingAbondonedPets(true);
     }
-    final pets = await PetService.getPetsByStatus(status: PetStatus.abandoned);
+    final pets = await PetService.getPetsByStatus(
+      token: _token??'',
+      status: PetStatus.missing
+    );
     if(pets!=null){
       _abandonedPets(pets);
     }

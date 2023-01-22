@@ -6,6 +6,7 @@ import 'package:adopt_us/screens/requests_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,9 +28,9 @@ class AppDrawer extends StatelessWidget {
                 onTap: (){
                   Navigator.pop(context);
                 }, 
-                icon: Icons.home_outlined, 
+                icon: CupertinoIcons.home, 
                 title: "Home",
-                isSelected: true,
+                isSelected: _bottomNavController.currentIndex==0,
               ),
               _DrawerTile(
                 onTap: (){
@@ -44,8 +45,9 @@ class AppDrawer extends StatelessWidget {
                   _bottomNavController.changeRoute(index: 1);
                   Navigator.pop(context);
                 }, 
-                icon: Icons.search,
+                icon: CupertinoIcons.search,
                 title: "Find Pet",
+                isSelected: _bottomNavController.currentIndex==1,
               ),
               _DrawerTile(
                 onTap: (){

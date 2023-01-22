@@ -189,7 +189,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 
               ],
             ),
-            if(_selectedStatus!=PetStatus.abandoned)
+            if(_selectedStatus!=PetStatus.missing)
               Column(
                 children: [
                   const SizedBox(height: 18,),

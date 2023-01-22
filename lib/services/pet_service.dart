@@ -90,10 +90,14 @@ abstract class PetService{
     );
   }
 
-  static Future<List<Pet>?> getPetsByStatus({required String status}) async {
+  static Future<List<Pet>?> getPetsByStatus({
+    required String token,
+    required String status
+  }) async {
     return await HttpUtils.get(
       methodName: "getPetByStatus : $status", 
       api: "${ApiPath.getPetByStatus}?status=$status",
+      token: token,
       onSuccess: (res)async{
         if(res?['data']!=null){
           List<Pet> pets = [];

@@ -8,13 +8,16 @@ class CachedImageContainer extends StatelessWidget {
   final double? width;
   final Color? borderColor;
   final IconData? placeholderIcon;
+  final double borderWidth;
   const CachedImageContainer({ Key? key, 
     required this.imgUrl,
     this.borderRadius ,
     this.borderColor,
     this.height,
     this.width,
-    this.placeholderIcon
+    this.placeholderIcon,
+    this.borderWidth=1
+
   }) : super(key: key);
 
   @override
@@ -27,6 +30,7 @@ class CachedImageContainer extends StatelessWidget {
         // shape: BoxShape.rectangle,
         border: Border.all(
           color: borderColor?? Colors.transparent,
+          width: borderWidth
         ),
         borderRadius: borderRadius??BorderRadius.circular(12)
       ),

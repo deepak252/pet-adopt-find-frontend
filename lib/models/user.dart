@@ -12,6 +12,8 @@ class User {
   Address? address;
   DateTime? createdAt;
   DateTime? updatedAt;
+
+  bool isLive=false;
   
   User({
     required this.userId,
