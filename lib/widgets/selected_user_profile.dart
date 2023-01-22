@@ -31,12 +31,13 @@ class SelectedUserProfile extends StatelessWidget {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         titleSpacing: 0,
+        
         title: Row(
           children: [
             CachedImageContainer(
               imgUrl: user.profilePic??Constants.defaultPic,
-              height: 50,
-              width: 50,
+              height: 40,
+              width: 40,
               borderRadius: BorderRadius.circular(100),
             ),
             const SizedBox(width: 6,),
@@ -78,7 +79,7 @@ class SelectedUserProfile extends StatelessWidget {
                   }
                 : null
               ),
-              // if(user.address!=null)
+              if(user.address!=null)
                 optionWidget(
                   label: "${user.address?.addressLine}",
                   trailingIcon: Icons.location_on,

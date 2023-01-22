@@ -1,10 +1,6 @@
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
-import 'package:adopt_us/screens/auth/sign_in_screen.dart';
-import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
-import 'package:adopt_us/storage/user_prefs.dart';
-import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';

@@ -1,7 +1,8 @@
-import 'dart:developer';
-
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/chat_controller.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/reset_password_screen.dart';
 import 'package:adopt_us/screens/auth/sign_up_screen.dart';
@@ -110,6 +111,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         CustomSnackbar.success(msg: "Sign In Successful");
                         await Get.delete<UserController>();
                         await Get.delete<BottomNavController>();
+                        await Get.delete<ChatController>();
+                        await Get.delete<PetController>();
+                        await Get.delete<RequestController>();
                         await UserPrefs.setToken(value: token);
                         if(mounted){
                           AppNavigator.pushAndRemoveUntil(context, const SplashScreen());

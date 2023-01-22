@@ -24,17 +24,17 @@ class _EditUserProfileScreenState
     extends State<EditUserProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
 
-  final TextEditingController _addrLineController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
-  final TextEditingController _pincodeController = TextEditingController();
-  final TextEditingController _countryController = TextEditingController();
-  final TextEditingController _latController = TextEditingController();
-  final TextEditingController _lngController = TextEditingController();
+  final  _addrLineController = TextEditingController();
+  final  _cityController = TextEditingController();
+  final  _stateController = TextEditingController();
+  final  _pincodeController = TextEditingController();
+  final  _countryController = TextEditingController();
+  final  _latController = TextEditingController();
+  final  _lngController = TextEditingController();
 
   final _userController =Get.put(UserController());
 

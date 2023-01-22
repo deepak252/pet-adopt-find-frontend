@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/chat_controller.dart';
@@ -116,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
             reverse: true,
             shrinkWrap: true,
             itemBuilder: (context,index){
-              int i=index;
+              // int i=index;
               if(index==0){
                 return const SizedBox(
                   height: 70,
@@ -197,7 +195,7 @@ class _ChatScreenState extends State<ChatScreen> {
             topRight: sentByMe ? Radius.zero : const Radius.circular(12),
           ),
           boxShadow: [
-            BoxShadow(blurRadius: 2,offset: Offset(3,3),color: Colors.grey.withOpacity(0.5))
+            BoxShadow(blurRadius: 2,offset: const Offset(3,3),color: Colors.grey.withOpacity(0.5))
           ]
         ),
         

@@ -21,7 +21,7 @@ class PetController extends GetxController{
   bool get loadingMissingPets => _loadingMissingPets.value;
   final  _missingPets = Rxn<List<Pet>>();
   List<Pet> get missingPets => _missingPets.value??[];
-  
+
   // final _loadingAbondonedPets = false.obs;
   // bool get loadingAbondonedPets => _loadingAbondonedPets.value;
   // final  _abandonedPets = Rxn<List<Pet>>();
@@ -34,10 +34,11 @@ class PetController extends GetxController{
   List<Pet> get myPets => _myPets.value??[];
   
   
-  final _token = UserPrefs.token;
+  String? _token = UserPrefs.token;
   
   @override
   void onInit() {
+    _token = UserPrefs.token;
     // fetchAllPets(enableLoading: true);
     // fetchAbondonedPets(enableLoading: true);
     fetchMissingPets(enableLoading: true);

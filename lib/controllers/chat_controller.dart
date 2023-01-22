@@ -33,10 +33,11 @@ class ChatController extends GetxController{
   }
 
   final _chatSocket = ChatSocketService();
-  final _token = UserPrefs.token;
+  String? _token = UserPrefs.token;
   
   @override
   void onInit() {
+    _token = UserPrefs.token;
     super.onInit();
     connect();
   }

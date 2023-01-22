@@ -1,10 +1,12 @@
 import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/pet/missing_pet_details.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
+import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,12 +16,16 @@ class MissingPetsScreen extends StatelessWidget {
   MissingPetsScreen({ Key? key }) : super(key: key);
 
   final _petController = Get.put(PetController());
+  final _userController = Get.put(UserController());
  
   @override
   Widget build(BuildContext context) {
     _petController.fetchMissingPets();
     return Scaffold(
       body : Obx((){
+        if(!_userController.isSignedIn){
+          return const NotSignedIn();
+        }
         if(_petController.loadingMissingPets){
           return const Center(
             child: CircularProgressIndicator(),

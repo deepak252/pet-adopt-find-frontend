@@ -178,7 +178,7 @@ class MyPetDetails extends StatelessWidget {
                 bool res =await  _requestController.sendAdoptRequest(pet.petId.toString());
                 Navigator.pop(context);
                 if(res){
-                  CustomSnackbar.message(msg: "Request sent");
+                  CustomSnackbar.success(msg: "Request sent");
                 }
               },
               text: "Request to Adopt",

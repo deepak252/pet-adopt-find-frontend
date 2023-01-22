@@ -17,7 +17,8 @@ abstract class HttpUtils{
     required SuccessCallback<T> onSuccess,
     VoidCallback? onError,
     String? token,
-    Map<String,dynamic>? payload,
+    Map<String,dynamic>? body,
+    bool showError=true
 
   }) async {
     try{
@@ -30,7 +31,7 @@ abstract class HttpUtils{
       http.Response  response = await http.post(
         Uri.parse(api),
         headers: headers,
-        body: payload!=null ? jsonEncode(payload) : null
+        body: body!=null ? jsonEncode(body) : null
       );
       if(response.statusCode==200){
         final result = jsonDecode(response.body);
@@ -41,13 +42,15 @@ abstract class HttpUtils{
       }
     }catch(e,s){
       debug.error(methodName, error: e,stackTrace: s);
-      try{
-        final error =  jsonDecode(e.toString())['error'] as String;
-        if(!error.contains("ER_NO_SUCH_TABLE")){
-          CustomSnackbar.error(error: error);
+      if(showError){
+        try{
+          final error =  jsonDecode(e.toString())['error'] as String;
+          if(!error.contains("ER_NO_SUCH_TABLE")){
+            CustomSnackbar.error(error: error);
+          }
+        }catch(e2){
+          CustomSnackbar.error(error: "Something went wrong!");
         }
-      }catch(e2){
-        CustomSnackbar.error(error: "Something went wrong!");
       }
     }
     return null;
@@ -60,6 +63,7 @@ abstract class HttpUtils{
     required SuccessCallback<T> onSuccess,
     VoidCallback? onError,
     String? token,
+    bool showError=true
   }) async {
     try{
       var headers = {
@@ -81,13 +85,15 @@ abstract class HttpUtils{
       }
     }catch(e,s){
       debug?.error(methodName, error: e,stackTrace: s);
-      try{
-        final error =  jsonDecode(e.toString())['error'];
-        if(!error.contains("ER_NO_SUCH_TABLE")){
-          CustomSnackbar.error(error: error);
+      if(showError){
+        try{
+          final error =  jsonDecode(e.toString())['error'] as String;
+          if(!error.contains("ER_NO_SUCH_TABLE")){
+            CustomSnackbar.error(error: error);
+          }
+        }catch(e2){
+          CustomSnackbar.error(error: "Something went wrong!");
         }
-      }catch(e2){
-        CustomSnackbar.error(error: "Something went wrong!");
       }
     }
     return null;
@@ -100,7 +106,8 @@ abstract class HttpUtils{
     required SuccessCallback<T> onSuccess,
     VoidCallback? onError,
     String? token,
-    Map<String,dynamic>? payload,
+    Map<String,dynamic>? body,
+    bool showError=true
 
   }) async {
     try{
@@ -113,7 +120,7 @@ abstract class HttpUtils{
       http.Response  response = await http.put(
         Uri.parse(api),
         headers: headers,
-        body: payload!=null ? jsonEncode(payload) : null
+        body: body!=null ? jsonEncode(body) : null
       );
       if(response.statusCode==200){
         final result = jsonDecode(response.body);
@@ -124,13 +131,61 @@ abstract class HttpUtils{
       }
     }catch(e,s){
       debug.error(methodName, error: e,stackTrace: s);
-      try{
-        final error =  jsonDecode(e.toString())['error'];
-        if(!error.contains("ER_NO_SUCH_TABLE")){
-          CustomSnackbar.error(error: error);
+      if(showError){
+        try{
+          final error =  jsonDecode(e.toString())['error'] as String;
+          if(!error.contains("ER_NO_SUCH_TABLE")){
+            CustomSnackbar.error(error: error);
+          }
+        }catch(e2){
+          CustomSnackbar.error(error: "Something went wrong!");
         }
-      }catch(e2){
-        CustomSnackbar.error(error: "Something went wrong!");
+      }
+    }
+    return null;
+  }
+
+  static Future<T?> delete<T>({
+    required String methodName,
+    required String api,
+    required DebugUtils debug,
+    required SuccessCallback<T> onSuccess,
+    VoidCallback? onError,
+    String? token,
+    Map<String,dynamic>? body,
+    bool showError=true
+
+  }) async {
+    try{
+      var headers = {
+        "Content-Type": "application/json",
+      };
+      if(token!=null){
+        headers["Authorization"] = "Bearer $token";
+      }
+      http.Response  response = await http.delete(
+        Uri.parse(api),
+        headers: headers,
+        body: body!=null ? jsonEncode(body) : null
+      );
+      if(response.statusCode==200){
+        final result = jsonDecode(response.body);
+        debug.message(methodName, result);
+        return await onSuccess(result);
+      }else {
+        throw response.body;
+      }
+    }catch(e,s){
+      debug.error(methodName, error: e,stackTrace: s);
+      if(showError){
+        try{
+          final error =  jsonDecode(e.toString())['error'] as String;
+          if(!error.contains("ER_NO_SUCH_TABLE")){
+            CustomSnackbar.error(error: error);
+          }
+        }catch(e2){
+          CustomSnackbar.error(error: "Something went wrong!");
+        }
       }
     }
     return null;

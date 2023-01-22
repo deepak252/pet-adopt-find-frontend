@@ -9,6 +9,7 @@ import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
 import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
+import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -50,6 +51,9 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     super.build(context);
     return Scaffold(
       body : Obx((){
+        if(!_userController.isSignedIn){
+          return const NotSignedIn();
+        }
         if(_petController.loadingSurrenderPets){
           return const Center(
             child: CircularProgressIndicator(),

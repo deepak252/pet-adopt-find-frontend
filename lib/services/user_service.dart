@@ -33,7 +33,7 @@ abstract class UserService{
       methodName: "updateProfile", 
       token: token,
       api: ApiPath.updateProfile,
-      payload: data,
+      body: data,
       onSuccess: (res)async{
         if(res?['data']!=null){
           return User.fromJson(res['data']);

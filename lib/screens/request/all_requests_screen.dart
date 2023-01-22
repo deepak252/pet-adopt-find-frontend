@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
@@ -5,7 +7,11 @@ import 'package:adopt_us/models/request.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/text_utils.dart';
+import 'package:adopt_us/widgets/confirmation_dialog.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/custom_loading_indicator.dart';
+import 'package:adopt_us/widgets/custom_outlined_button.dart';
+import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:adopt_us/widgets/selected_user_profile.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +19,14 @@ import 'package:get/get.dart';
 
 import 'package:adopt_us/widgets/cached_image_container.dart';
 
-class RequestsScreen extends StatefulWidget {
-  const RequestsScreen({ Key? key }) : super(key: key);
+class AllRequestsScreen extends StatefulWidget {
+  const AllRequestsScreen({ Key? key }) : super(key: key);
 
   @override
-  State<RequestsScreen> createState() => _RequestsScreenState();
+  State<AllRequestsScreen> createState() => _AllRequestsScreenState();
 }
 
-class _RequestsScreenState extends State<RequestsScreen> {
+class _AllRequestsScreenState extends State<AllRequestsScreen> {
   final _requestController = Get.put(RequestController());
 
   @override
@@ -188,7 +194,16 @@ class _RequestsScreenState extends State<RequestsScreen> {
                         ),
                       )
                     ],
-                  )
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      "${request.date}, ${request.time}",
+                      style: const TextStyle(
+                        fontSize: 12
+                      ),
+                    ),
+                  ),
                  
                 ],
               ),
@@ -198,47 +213,84 @@ class _RequestsScreenState extends State<RequestsScreen> {
                 width: 50,
                 borderRadius: BorderRadius.circular(100),
               ),
-            
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: OutlinedButton(
-                      onPressed: (){
-
-                      },
-                      style: OutlinedButton.styleFrom(
+            
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: request.isPending
+              ? Row(
+                  children: [
+                    Expanded(
+                      child : CustomOutlinedButton(
+                        onPressed: ()async{
+                          bool? confirmCancel = await showConfirmationDialog(
+                            title: "Cancel Request",
+                            description: "Do you want to cancel request?",
+                            cancelText: "No",
+                            confirmText: "Yes",
+                            cancelTextColor: Themes.colorBlack,
+                            confirmTextColor: Colors.red,
+                            onCancel: (){
+                              Navigator.pop(context,false);
+                            },
+                            onConfirm: (){
+                              Navigator.pop(context,true);
+                            }
+                          );
+                          
+                          if(confirmCancel==true){
+                            customLoadingIndicator(context: context,canPop: false);
+                            //Reject/Cancel Request
+                            bool res = await _requestController.updateRequestStatus(
+                              requestId: request.requestId,
+                              status: RequestStatus.rejected
+                            );
+                            if(res){
+                              CustomSnackbar.message(msg: "Request Cancelled");
+                            }
+                            if(mounted){
+                              Navigator.pop(context); //Dismiss Loading Indicator
+                            }
+                            
+                          }
+                        },
+                        text: "Cancel",
+                      ),
+                    ),
+                    const SizedBox(width: 16,),
+                    Expanded(
+                      child: CustomElevatedButton(
                         padding: const EdgeInsets.all(12),
-                        side: const BorderSide(color: Colors.red),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )
+                        onPressed: ()async{
+                          customLoadingIndicator(context: context,canPop: false);
+                            //Accept Request
+                            bool res = await _requestController.updateRequestStatus(
+                              requestId: request.requestId,
+                              status: RequestStatus.accepted
+                            );
+                            if(res){
+                              CustomSnackbar.success(msg: "Request Accepted");
+                            }
+                            if(mounted){
+                              Navigator.pop(context); //Dismiss Loading Indicator
+                            }
+                        },
+                        text: "Accept",
+                        btnColor: Colors.green,
+                        borderRadius: 12,
                       ),
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 18
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomElevatedButton(
-                      padding: EdgeInsets.all(12),
-                      onPressed: (){},
-                      text: "Accept",
-                      btnColor: Colors.green,
-                      borderRadius: 12,
-                    ),
-                  ),
+                    )
+                  ],
                 )
-              ],
+              : CustomElevatedButton(
+                  onPressed: null,
+                  text: request.status,
+                  txtColor: request.isAccepted 
+                    ? Colors.green 
+                    : request.isAccepted 
+                      ? Colors.red[400] : null,
+                  padding: const EdgeInsets.all(14),
+                ),
             )
           ],
         ),      
@@ -327,7 +379,16 @@ class _RequestsScreenState extends State<RequestsScreen> {
                         ),
                       )
                     ],
-                  )
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      "${request.date}, ${request.time}",
+                      style: const TextStyle(
+                        fontSize: 12
+                      ),
+                    ),
+                  ),
                  
                 ],
               ),
@@ -345,33 +406,38 @@ class _RequestsScreenState extends State<RequestsScreen> {
               ),
             
             ),
-            Column(
-              children: [
-                Text("${request.createdAt}"),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: OutlinedButton(
-                    onPressed: (){
-
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomOutlinedButton(
+                onPressed: ()async{
+                  //Delete Request
+                  bool? confirmDelete = await showConfirmationDialog(
+                    title: "Cancel Request",
+                    description: "Do you want to cancel request?",
+                    cancelText: "No",
+                    confirmText: "Yes",
+                    cancelTextColor: Themes.colorBlack,
+                    confirmTextColor: Colors.red,
+                    onCancel: (){
+                      Navigator.pop(context,false);
                     },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.all(12),
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      minimumSize: Size(double.infinity,0)
-                    ),
-                    child: const Text(
-                      "Cancel",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 18
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                    onConfirm: (){
+                      Navigator.pop(context,true);
+                    }
+                  );
+                  if(confirmDelete==true){
+                    customLoadingIndicator(context: context,canPop: false);
+                    bool res =await _requestController.deleteRequest(requestId: request.requestId);
+                    if(res){
+                      CustomSnackbar.message(msg: "Request Cancelled");
+                    }
+                    if(mounted){
+                      Navigator.pop(context); //Dismiss Loading Indicator
+                    }
+                  }
+                },
+                text: "Cancel",
+              ),
             )
           ],
         ),      

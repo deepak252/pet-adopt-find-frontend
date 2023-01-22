@@ -18,7 +18,7 @@ abstract class PetService{
       methodName: "createPet", 
       token: token,
       api: ApiPath.createPet,
-      payload: data,
+      body: data,
       onSuccess: (res)async{
         if(res?['data']!=null){
           return true;
@@ -36,7 +36,7 @@ abstract class PetService{
       methodName: "editPet", 
       token: token,
       api: ApiPath.editPet,
-      payload: data,
+      body: data,
       onSuccess: (res)async{
         if(res?['data']!=null){
           return true;
@@ -64,7 +64,8 @@ abstract class PetService{
         }
         return null;
       },
-      // debug: _debug,
+      debug: _debug,
+      showError: false
     );
   }
 
@@ -87,7 +88,8 @@ abstract class PetService{
         }
         return null;
       },
-      // debug: _debug,
+      debug: _debug,
+      
     );
   }
 
@@ -118,6 +120,7 @@ abstract class PetService{
         return null;
       },
       debug: _debug,
+      showError: false
     );
   }
 

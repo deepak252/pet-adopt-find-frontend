@@ -20,6 +20,9 @@ abstract class ApiPath{
   static const String createRequest = "$baseUrl/request/create";
   static const String requestsReceived = "$baseUrl/request/requestsReceived";
   static const String requestsMade = "$baseUrl/request/requestsMade";
+  static const String requestsByPetId = "$baseUrl/request/requestsByPetId";
+  static const String updateRequest = "$baseUrl/request/update";
+  static const String deleteRequest = "$baseUrl/request/delete";
 
 
 }

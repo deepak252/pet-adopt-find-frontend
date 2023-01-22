@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:adopt_us/config/image_path.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
-import 'package:adopt_us/controllers/chat_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/chat/all_chats_screen.dart';
 import 'package:adopt_us/screens/missing_pets_screen.dart';

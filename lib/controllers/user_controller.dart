@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/chat_controller.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/models/user.dart';
@@ -17,7 +18,7 @@ class UserController extends GetxController{
   User? get user => _user.value;
   bool get isSignedIn => user!=null;
   
-  final _token = UserPrefs.token;
+  String? _token = UserPrefs.token;
 
   bool get validateUser{
     log("ProfileController, Validate User");
@@ -38,6 +39,7 @@ class UserController extends GetxController{
   
   @override
   void onInit() {
+    _token = UserPrefs.token;
     super.onInit();
     
     fetchProfile();
@@ -89,10 +91,11 @@ class UserController extends GetxController{
   Future logOut()async{
     _user(null);
     await UserPrefs.clearData();
-    await Get.delete<UserController>();
+    await Get.delete<ChatController>();
     await Get.delete<BottomNavController>();
     await Get.delete<RequestController>();
     await Get.delete<PetController>();
+    await Get.delete<UserController>();
   }
 
 }

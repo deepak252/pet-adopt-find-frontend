@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       title: 'Adopt Us',
       debugShowCheckedModeBanner: false,
       theme: Themes.lightTheme,
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

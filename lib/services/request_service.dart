@@ -72,8 +72,73 @@ abstract class RequestService{
       // debug: _debug,
     );
   }
- 
- 
+
+  static Future<List<Request>?> specificPetRequests({
+    required String token,
+    required int petId
+  }) async {
+    return await HttpUtils.get(
+      methodName: "requestsByPetId : $petId", 
+      api: "${ApiPath.requestsByPetId}/$petId",
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          List<Request> requests = [];
+          for(var req in res?['data']){
+            try{
+              requests.add(Request.fromJson(req));
+            }catch(e,s){
+              _debug.error("specificPetRequests (Invalid json request)", error: e, stackTrace: s);
+            }
+          }
+          return requests;
+        }
+        return null;
+      },
+      debug: _debug,
+    );
+  }
+  
+  static Future<bool?> updateRequest({
+    required String token,
+    required int requestId,
+    required String status,
+  }) async {
+    return await HttpUtils.put(
+      methodName: "updateRequest : $requestId", 
+      api: "${ApiPath.updateRequest}/$requestId",
+      body : {
+        "status" : status
+      },
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return true;
+        }
+      },
+      debug: _debug,
+    );
+  }
+
+  static Future<bool?> deleteRequest({
+    required String token,
+    required int requestId
+  }) async {
+    return await HttpUtils.delete(
+      methodName: "deleteRequest : $requestId", 
+      api: "${ApiPath.deleteRequest}/$requestId",
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return true;
+        }
+      },
+      debug: _debug,
+    );
+  }
+  
+
+  
 
  
 }
