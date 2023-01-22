@@ -94,7 +94,7 @@ class ChatController extends GetxController{
         if(val==null){
           val = {chat.roomId : [chat] };
         }else{
-          val[chat.roomId] = [chat,...val[chat.roomId]!];
+          val[chat.roomId] = [chat,...(val[chat.roomId]??[])];
         }
         _chats(val);
       });

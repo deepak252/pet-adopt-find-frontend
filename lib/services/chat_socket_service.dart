@@ -110,7 +110,7 @@ class ChatSocketService{
           }
         });
       }
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 2000));
       return socketIdCompleter.future;
     } catch (e,s) {
        _debug.error("createConnection, ERROR II",error: e,stackTrace: s);

@@ -5,7 +5,7 @@ import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/chat_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/chat/all_chats_screen.dart';
-import 'package:adopt_us/screens/find_screen.dart';
+import 'package:adopt_us/screens/missing_pets_screen.dart';
 import 'package:adopt_us/screens/home_screen.dart';
 import 'package:adopt_us/screens/notification_screen.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
@@ -104,7 +104,7 @@ class _DashboardState extends State<Dashboard> {
           controller: _bottomNavController.pageController,
           children: [
             HomeScreen(),
-            FindScreen(),
+            MissingPetsScreen(),
             AllChatsScreen(),
             UserProfileScreen(),
           ],
