@@ -1,6 +1,6 @@
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/models/pet.dart';
-import 'package:adopt_us/screens/pet/abondoned_pet_details.dart';
+import 'package:adopt_us/screens/pet/missing_pet_details.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
@@ -10,41 +10,41 @@ import 'package:get/get.dart';
 
 import 'package:adopt_us/widgets/cached_image_container.dart';
 
-class FindScreen extends StatelessWidget {
-  FindScreen({ Key? key }) : super(key: key);
+class MissingPetsScreen extends StatelessWidget {
+  MissingPetsScreen({ Key? key }) : super(key: key);
 
   final _petController = Get.put(PetController());
  
   @override
   Widget build(BuildContext context) {
-    _petController.fetchAbondonedPets();
+    _petController.fetchMissingPets();
     return Scaffold(
       body : Obx((){
-        if(_petController.loadingAbondonedPets){
+        if(_petController.loadingMissingPets){
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        if(_petController.abandonedPets.isEmpty){
+        if(_petController.missingPets.isEmpty){
           return NoResultWidget(
             title: "No Pets Found!",
             onRefresh: ()async{
-              _petController.fetchAbondonedPets(enableLoading: true);
+              _petController.fetchMissingPets(enableLoading: true);
             },
           );
         }
         return RefreshIndicator(
           onRefresh: ()async{
-            await _petController.fetchAbondonedPets(enableLoading: true);
+            await _petController.fetchMissingPets(enableLoading: true);
           },
           child: ListView.separated(
-            itemCount: _petController.abandonedPets.length,
+            itemCount: _petController.missingPets.length,
             separatorBuilder: (BuildContext context, int index){
               return const Divider();
             },
             itemBuilder: (BuildContext context, int index){
-              return _AbondonedPet(
-                pet: _petController.abandonedPets[index]
+              return _MissingPet(
+                pet: _petController.missingPets[index]
               );
             },
           ),
@@ -103,14 +103,14 @@ class FindScreen extends StatelessWidget {
 }
 
 
-class _AbondonedPet extends StatelessWidget {
+class _MissingPet extends StatelessWidget {
   final Pet pet;
-  const _AbondonedPet({ Key? key, required this.pet}) : super(key: key);
+  const _MissingPet({ Key? key, required this.pet}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        AppNavigator.push(context, AbondonedPetDetailsScreen(
+        AppNavigator.push(context, MissingPetDetailsScreen(
           pet: pet,
         ));
         
@@ -133,7 +133,7 @@ class _AbondonedPet extends StatelessWidget {
               children: [
                 const SizedBox(height: 4,),
                 Text(
-                  "Abandoned",
+                  "Missing",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

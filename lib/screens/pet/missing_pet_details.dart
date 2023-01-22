@@ -8,9 +8,9 @@ import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AbondonedPetDetailsScreen extends StatelessWidget {
+class MissingPetDetailsScreen extends StatelessWidget {
   final Pet pet;
-  AbondonedPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
+  MissingPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
 
   final _requestController = Get.put(RequestController());
   
@@ -56,7 +56,7 @@ class AbondonedPetDetailsScreen extends StatelessWidget {
                     children: [
                       Text(
                         pet.petName!.trim().isEmpty
-                        ? "Abandoned"
+                        ? "Missing"
                         : pet.petName!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,

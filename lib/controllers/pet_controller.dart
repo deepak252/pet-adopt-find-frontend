@@ -11,15 +11,22 @@ class PetController extends GetxController{
   final  _allPets = Rxn<List<Pet>>();
   List<Pet> get allPets => _allPets.value??[];
 
-  final _loadingAbondonedPets = false.obs;
-  bool get loadingAbondonedPets => _loadingAbondonedPets.value;
-  final  _abandonedPets = Rxn<List<Pet>>();
-  List<Pet> get abandonedPets => _abandonedPets.value??[];
 
   final _loadingSurrenderPets = false.obs;
   bool get loadingSurrenderPets => _loadingSurrenderPets.value;
   final  _surrenderedPets = Rxn<List<Pet>>();
   List<Pet> get surrenderedPets => _surrenderedPets.value??[];
+
+  final _loadingMissingPets = false.obs;
+  bool get loadingMissingPets => _loadingMissingPets.value;
+  final  _missingPets = Rxn<List<Pet>>();
+  List<Pet> get missingPets => _missingPets.value??[];
+  
+  // final _loadingAbondonedPets = false.obs;
+  // bool get loadingAbondonedPets => _loadingAbondonedPets.value;
+  // final  _abandonedPets = Rxn<List<Pet>>();
+  // List<Pet> get abandonedPets => _abandonedPets.value??[];
+
 
   final _loadingMyPets = false.obs;
   bool get loadingMyPets => _loadingMyPets.value;
@@ -32,7 +39,8 @@ class PetController extends GetxController{
   @override
   void onInit() {
     // fetchAllPets(enableLoading: true);
-    fetchAbondonedPets(enableLoading: true);
+    // fetchAbondonedPets(enableLoading: true);
+    fetchMissingPets(enableLoading: true);
     fetchSurrendedPets(enableLoading: true);
     fetchMyPets(enableLoading: true);
     super.onInit();
@@ -65,7 +73,7 @@ class PetController extends GetxController{
     if(result!=null){
       fetchAllPets();
       fetchSurrendedPets();
-      fetchAbondonedPets();
+      fetchMissingPets();
       return result;
     }
     return false;
@@ -82,7 +90,7 @@ class PetController extends GetxController{
     if(result!=null){
       fetchAllPets();
       fetchSurrendedPets();
-      fetchAbondonedPets();
+      fetchMissingPets();
       fetchMyPets();
       return result;
     }
@@ -108,26 +116,45 @@ class PetController extends GetxController{
     }
   }
 
-
-  Future fetchAbondonedPets({bool enableLoading = false})async{
-    if(loadingAbondonedPets){
+  Future fetchMissingPets({bool enableLoading = false})async{
+    if(loadingMissingPets){
       return;
     }
     if(enableLoading){
-      _loadingAbondonedPets(true);
+      _loadingMissingPets(true);
     }
     final pets = await PetService.getPetsByStatus(
       token: _token??'',
       status: PetStatus.missing
     );
     if(pets!=null){
-      _abandonedPets(pets);
+      _missingPets(pets);
     }
     if(enableLoading){
-      _loadingAbondonedPets(false);
+      _loadingMissingPets(false);
     }
     
   }
+
+  // Future fetchAbondonedPets({bool enableLoading = false})async{
+  //   if(loadingAbondonedPets){
+  //     return;
+  //   }
+  //   if(enableLoading){
+  //     _loadingAbondonedPets(true);
+  //   }
+  //   final pets = await PetService.getPetsByStatus(
+  //     token: _token??'',
+  //     status: PetStatus.missing
+  //   );
+  //   if(pets!=null){
+  //     _abandonedPets(pets);
+  //   }
+  //   if(enableLoading){
+  //     _loadingAbondonedPets(false);
+  //   }
+    
+  // }
 
   Future fetchMyPets({bool enableLoading = false})async{
     if(loadingMyPets || _token==null){

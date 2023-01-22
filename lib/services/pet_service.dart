@@ -2,6 +2,7 @@
 import 'dart:developer';
 
 import 'package:adopt_us/config/api_path.dart';
+import 'package:adopt_us/config/pet_status.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/utils/debug_utils.dart';
 import 'package:adopt_us/utils/http_utils.dart';
@@ -103,9 +104,13 @@ abstract class PetService{
           List<Pet> pets = [];
           for(var petJson in res?['data']){
             try{
-              pets.add(Pet.fromJson(petJson));
+              if(status==PetStatus.missing){
+                pets.add(Pet.fromJson(petJson['pet']));
+              }else{
+                pets.add(Pet.fromJson(petJson));
+              }
             }catch(e,s){
-              _debug.error("getPetsByStatus (Invalid json pet)", error: e, stackTrace: s);
+              _debug.error("getPetsByStatus (Invalid json pet) : $petJson", error: e, stackTrace: s);
             }
           }
           return pets;
