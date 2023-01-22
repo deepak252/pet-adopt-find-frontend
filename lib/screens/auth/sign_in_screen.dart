@@ -3,16 +3,18 @@ import 'dart:developer';
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/auth/reset_password_screen.dart';
 import 'package:adopt_us/screens/auth/sign_up_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
-import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/app_icon_widget.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
+import 'package:adopt_us/widgets/custom_snack_bar.dart';
 import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,7 +52,6 @@ class _SignInScreenState extends State<SignInScreen> {
           physics : const BouncingScrollPhysics(),
           child: Form(
             key: _formkey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16
@@ -70,14 +71,14 @@ class _SignInScreenState extends State<SignInScreen> {
                   CustomTextField(
                     controller: _passwordController,
                     hintText: " Password",
-                    validator: (val)=>val==null || val.isEmpty ? "Enter password" : null,
+                    validator: TextValidator.validatePassword,
                   ),
                   const SizedBox(height: 12,),
                   Align(
                     alignment : Alignment.topRight,
                     child: InkWell(
                       onTap: (){
-
+                        AppNavigator.push(context, const ResetPasswordScreen());
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(4.0),
@@ -98,19 +99,20 @@ class _SignInScreenState extends State<SignInScreen> {
                       }
                       customLoadingIndicator(context: context,canPop: false);
                       final token = await AuthService.signIn(
-                        email: _emailController.text, 
-                        password: _passwordController.text
+                        email: _emailController.text.trim(), 
+                        password: _passwordController.text.trim()
                       );
                       if(mounted){
                         Navigator.pop(context); //dismiss loading indicator
                       }
                       if(token!=null){
                         //Sign In Successfull
+                        CustomSnackbar.success(msg: "Sign In Successful");
                         await Get.delete<UserController>();
                         await Get.delete<BottomNavController>();
                         await UserPrefs.setToken(value: token);
                         if(mounted){
-                          AppRouter.pushAndRemoveUntil(context, const SplashScreen());
+                          AppNavigator.pushAndRemoveUntil(context, const SplashScreen());
                         }
                       }
                     },
@@ -123,7 +125,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   GestureDetector(
                     onTap: (){
                       unfocus(context);
-                      AppRouter.push(context, const SignUpScreen());
+                      AppNavigator.push(context, const SignUpScreen());
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(4.0),

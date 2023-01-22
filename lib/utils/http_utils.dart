@@ -42,8 +42,10 @@ abstract class HttpUtils{
     }catch(e,s){
       debug.error(methodName, error: e,stackTrace: s);
       try{
-        final error =  jsonDecode(e.toString())['error'];
-        CustomSnackbar.error(error: error);
+        final error =  jsonDecode(e.toString())['error'] as String;
+        if(!error.contains("ER_NO_SUCH_TABLE")){
+          CustomSnackbar.error(error: error);
+        }
       }catch(e2){
         CustomSnackbar.error(error: "Something went wrong!");
       }
@@ -81,7 +83,9 @@ abstract class HttpUtils{
       debug?.error(methodName, error: e,stackTrace: s);
       try{
         final error =  jsonDecode(e.toString())['error'];
-        CustomSnackbar.error(error: error);
+        if(!error.contains("ER_NO_SUCH_TABLE")){
+          CustomSnackbar.error(error: error);
+        }
       }catch(e2){
         CustomSnackbar.error(error: "Something went wrong!");
       }
@@ -122,7 +126,9 @@ abstract class HttpUtils{
       debug.error(methodName, error: e,stackTrace: s);
       try{
         final error =  jsonDecode(e.toString())['error'];
-        CustomSnackbar.error(error: error);
+        if(!error.contains("ER_NO_SUCH_TABLE")){
+          CustomSnackbar.error(error: error);
+        }
       }catch(e2){
         CustomSnackbar.error(error: "Something went wrong!");
       }

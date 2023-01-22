@@ -5,7 +5,7 @@ import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/pet/edit_pet_screen.dart';
-import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
@@ -33,7 +33,7 @@ class MyPetDetails extends StatelessWidget {
               child: RawMaterialButton(
                 shape: const CircleBorder(),
                 onPressed: (){
-                  AppRouter.push(context, EditPetScreen(
+                  AppNavigator.push(context, EditPetScreen(
                     pet: pet,
                   ));
                 }, 

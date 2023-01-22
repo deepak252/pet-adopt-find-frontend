@@ -47,4 +47,25 @@ abstract class AuthService{
     );
   }
   
+  //Return true
+  static Future<bool?> resetPassword({
+    required String email,
+    required String password,
+  }) async {
+    return await HttpUtils.post<bool?>(
+      methodName: "resetPassword", 
+      api: ApiPath.resetPassword, 
+      payload: {
+        "email": email,
+        "newPassword": password,
+      },
+      onSuccess: (res)async{
+        if(res?["data"]?["message"]=="Password Reset Successful"){
+          return true;
+        }
+        return false;
+      },
+      debug: _debug,
+    );
+  }
 }

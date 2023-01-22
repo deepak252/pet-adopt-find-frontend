@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppRouter{
+class AppNavigator{
   static Future push(BuildContext context,Widget widget){
     return Navigator.of(context).push(
       MaterialPageRoute(builder: (_)=>widget), 

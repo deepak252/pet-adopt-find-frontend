@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:adopt_us/models/address.dart';
+
 class User {
   final int userId;
   String? token;
@@ -6,8 +9,11 @@ class User {
   String? mobile;
   String? profilePic;
   String? fcmToken;
+  Address? address;
   DateTime? createdAt;
   DateTime? updatedAt;
+
+  bool isLive=false;
   
   User({
     required this.userId,
@@ -17,6 +23,7 @@ class User {
     this.mobile,
     this.profilePic,
     this.fcmToken,
+    this.address,
     this.createdAt,
     this.updatedAt,
   });
@@ -29,6 +36,9 @@ class User {
     mobile: json["mobile"],
     profilePic: json["profilePic"],
     fcmToken: json["fcmToken"],
+    address: json["address"]!=null 
+    ? Address.fromJson(jsonDecode(json["address"]))
+    : null,
     createdAt: DateTime.tryParse(json["createdAt"]??''),
     updatedAt: DateTime.tryParse(json["updatedAt"]??''),
   );
@@ -41,6 +51,7 @@ class User {
     "mobile": mobile,
     "profilePic": profilePic,
     "fcmToken": fcmToken,
+    "address": address?.toJson(),
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
   };
@@ -53,6 +64,7 @@ class User {
     String? mobile,
     String? profilePic,
     String? fcmToken,
+    Address? address,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -64,6 +76,7 @@ class User {
       mobile: mobile ?? this.mobile,
       profilePic: profilePic ?? this.profilePic,
       fcmToken: fcmToken ?? this.fcmToken,
+      address: address ?? this.address,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

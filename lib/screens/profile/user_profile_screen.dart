@@ -8,7 +8,7 @@ import 'package:adopt_us/screens/pet/my_pets_screen.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
 import 'package:adopt_us/services/location_utils.dart';
-import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
@@ -57,20 +57,15 @@ class UserProfileScreen extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: ()async{
-                            final pickedImage = await FileUtils.pickImageFromGallery();
-                            if(pickedImage==null) return;
-                            // log("File : ${pickedImage.path}. size ${FileUtils.fileSizeKB(pickedImage)} KB");
-                            if(FileUtils.fileSizeKB(pickedImage)>2048){
-                              return CustomSnackbar.error(
-                                error: "Image size can't be greater than 2Mb."
-                              );
+                            final imgFile = await FileUtils.pickAndCropImage();
+                            if(imgFile==null){
+                              return;
                             }
-                            final croppedImage = await FileUtils.cropImage(pickedImage);
-                            if(croppedImage==null) return;
+                            // log("Cropped File : ${croppedImage.path}. size ${FileUtils.fileSizeKB(croppedImage)} KB");
                             customLoadingIndicator(context: context,canPop: false);
                             final newImgUrl = await FirebaseStorageService.uploadFile(
-                                file : croppedImage,
-                                fileName: FileUtils.getFileNameFromPath(croppedImage.path)??'',
+                                file : imgFile,
+                                fileName: FileUtils.getFileNameFromPath(imgFile.path)??'',
                                 path: StoragePath.profilePic
                             );
                             Navigator.pop(context);
@@ -130,12 +125,35 @@ class UserProfileScreen extends StatelessWidget {
                               fontSize: 14
                             ),
                           ),
+                          if(user.address!=null)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${user.address!.addressLine}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Themes.colorBlack.withOpacity(0.5),
+
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  "${user.address!.state}-${user.address!.pincode}, ${user.address!.country}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Themes.colorBlack.withOpacity(0.5)
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 100,),
+                SizedBox(height: 60,),
                 Divider(),
                 optionWidget(
                   label: "Settings",
@@ -145,14 +163,14 @@ class UserProfileScreen extends StatelessWidget {
                   label: "My Pets",
                   icon: Icons.pets,
                   onTap: (){
-                    AppRouter.push(context, MyPetsScreen());
+                    AppNavigator.push(context, MyPetsScreen());
                   }
                 ),
                 optionWidget(
                   label: "Edit Profile",
                   icon: Icons.edit,
                   onTap: (){
-                    AppRouter.push(context, EditUserProfileScreen());
+                    AppNavigator.push(context, EditUserProfileScreen());
                   }
                 ),
                 

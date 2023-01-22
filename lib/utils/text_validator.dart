@@ -38,11 +38,13 @@ class TextValidator {
   
 
   static String? validatePassword(String? value) {
-    if (value == '' || value == null) return 'Enter password';
-    return value.length<6 ?  'Password must contain at least 6 character' : null;
+    if (value==null || value.trim()=='') return "Password can't be empty";
+    return value.trim().length<6 ?  'Password must contain at least 6 character' : null;
   }
 
   static String? validateConfirmPassword( String? confirmPassword, String? password) {
+    confirmPassword = confirmPassword?.trim();
+    password = password?.trim();
     return confirmPassword != password ? 'Password not match' : null;
   }
 

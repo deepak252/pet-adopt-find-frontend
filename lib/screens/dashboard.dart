@@ -2,13 +2,18 @@ import 'dart:developer';
 
 import 'package:adopt_us/config/image_path.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/chat_controller.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/chat/all_chats_screen.dart';
 import 'package:adopt_us/screens/find_screen.dart';
 import 'package:adopt_us/screens/home_screen.dart';
 import 'package:adopt_us/screens/notification_screen.dart';
+import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/screens/profile/user_profile_screen.dart';
-import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/app_drawer.dart';
 import 'package:adopt_us/widgets/custom_icon_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,7 +26,21 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final _bottomNavController = Get.put(BottomNavController());
+  final _userController = Get.put(UserController());
+  // final _chatController = Get.put(ChatController());
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(_userController.isSignedIn && !_userController.validateUser){
+        AppNavigator.push(context, const EditUserProfileScreen(
+          canPop: false,
+        ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +70,11 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               title: Text(
-                index!=2
+                index<2
                 ? "Adopt Us"
-                : "Profile",
+                : index==2
+                  ? "Messages"
+                  : "Profile",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 20
@@ -63,7 +84,7 @@ class _DashboardState extends State<Dashboard> {
                 if(index==0)
                   CustomIconButton(
                     onPressed: (){
-                      AppRouter.push(context, NotificationScreen());
+                      AppNavigator.push(context, NotificationScreen());
                     },
                     icon: Icons.notifications_on_rounded,
                   )
@@ -84,6 +105,7 @@ class _DashboardState extends State<Dashboard> {
           children: [
             HomeScreen(),
             FindScreen(),
+            AllChatsScreen(),
             UserProfileScreen(),
           ],
           onPageChanged: (index) {
@@ -116,15 +138,19 @@ class _DashboardState extends State<Dashboard> {
                 currentIndex: _bottomNavController.currentIndex,
                 items: const [
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.home_outlined),
+                    icon: Icon(CupertinoIcons.home),
                     label: "Home"
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.search, size: 22,),
+                    icon: Icon(CupertinoIcons.search, size: 22,),
                     label: "Find"
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline_outlined),
+                    icon: Icon(CupertinoIcons.chat_bubble_2, size: 22,),
+                    label: "Chat"
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.person),
                     label:"Profile"
                   ),
                 ],

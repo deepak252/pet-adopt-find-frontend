@@ -3,7 +3,7 @@ import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/models/request.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
-import 'package:adopt_us/utils/app_router.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/text_utils.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
@@ -334,7 +334,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
               
               leading: GestureDetector(
                 onTap: (){
-                  AppRouter.push(context, SurrendedPetDetailsScreen(pet: request.pet!));
+                  AppNavigator.push(context, SurrendedPetDetailsScreen(pet: request.pet!));
                 },
                 child: CachedImageContainer(
                   imgUrl: request.pet?.photos[0]??'',

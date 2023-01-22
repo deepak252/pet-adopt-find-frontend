@@ -55,6 +55,8 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isKeyoboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
+
     return GestureDetector(
       onTap: ()=>unfocus(context),
       child: Scaffold(
@@ -66,71 +68,74 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
         ),
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: CustomElevatedButton(
-            onPressed: ()async {
-              unfocus(context);
-              bool postCreated=false;
-              if(!_formKey.currentState!.validate()){
-                log("Invalid form");
-                return;
-              }
-              if(_petImages.isEmpty){
-                return CustomSnackbar.error(error: "Upload Pet Image");
-              }
-              if(!_userController.isSignedIn){
-                return CustomSnackbar.error(error: "Not Signed In");
-              }
-              customLoadingIndicator(context: context,canPop : false);
-              //Upload pet images to firebase
-              var imgUrls = await Future.wait(
-                _petImages.map((img)async{
-                  String? fileName = FileUtils.getFileNameFromPath(img.path);
-                  if(fileName!=null){
-                    return  FirebaseStorageService.uploadFile(
-                        file : img,
-                        fileName: fileName,
-                        path: StoragePath.petPic
-                    );
-                  }
-                })
-              )..removeWhere((e) => e==null);
-              log("$imgUrls");
-              if(imgUrls.isNotEmpty){
-                postCreated = await _petController.createPet({
-                  "userId" : _userController.user!.userId,
-                  "petName" : _petNameController.text,
-                  "breed" : _breedController.text,
-                  "age" : _petAgeController.text,
-                  "photos" : imgUrls,
-                  "petStatus" : _selectedStatus,
-                  "gender" : _selectedGender,
-                  "petInfo" : _petDescriptionController.text,
-                  "category" : _selectedCategory
-                  // "addressLine" : "B-54, Andheri East",
-                  // "city" : "Mumbai",
-                  // "state" : "Maharastra",
-                  // "pincode" : "232424",
-                  // "coordinates" : ["42424", "42424"] 
-                });
-              }
-              if(mounted){
-                Navigator.pop(context); //Dismiss loading indicator
-                if(postCreated){
-                  CustomSnackbar.message(msg: "Pet profile created successfully");
-                  Navigator.pop(context);
-                }else{
-                  //Operation unsuccessful
-                  // Delete pet images from firebase storage
-                  FirebaseStorageService.deleteMultipleFiles(
-                    fileUrls: imgUrls
-                  );
-                  
+        floatingActionButton: Visibility(
+          visible: !isKeyoboardOpen,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: CustomElevatedButton(
+              onPressed: ()async {
+                unfocus(context);
+                bool postCreated=false;
+                if(!_formKey.currentState!.validate()){
+                  log("Invalid form");
+                  return;
                 }
-              }
-            },
-            text: "Submit",
+                if(_petImages.isEmpty){
+                  return CustomSnackbar.error(error: "Upload Pet Image");
+                }
+                if(!_userController.isSignedIn){
+                  return CustomSnackbar.error(error: "Not Signed In");
+                }
+                customLoadingIndicator(context: context,canPop : false);
+                //Upload pet images to firebase
+                var imgUrls = await Future.wait(
+                  _petImages.map((img)async{
+                    String? fileName = FileUtils.getFileNameFromPath(img.path);
+                    if(fileName!=null){
+                      return  FirebaseStorageService.uploadFile(
+                          file : img,
+                          fileName: fileName,
+                          path: StoragePath.petPic
+                      );
+                    }
+                  })
+                )..removeWhere((e) => e==null);
+                log("$imgUrls");
+                if(imgUrls.isNotEmpty){
+                  postCreated = await _petController.createPet({
+                    "userId" : _userController.user!.userId,
+                    "petName" : _petNameController.text,
+                    "breed" : _breedController.text,
+                    "age" : _petAgeController.text,
+                    "photos" : imgUrls,
+                    "petStatus" : _selectedStatus,
+                    "gender" : _selectedGender,
+                    "petInfo" : _petDescriptionController.text,
+                    "category" : _selectedCategory
+                    // "addressLine" : "B-54, Andheri East",
+                    // "city" : "Mumbai",
+                    // "state" : "Maharastra",
+                    // "pincode" : "232424",
+                    // "coordinates" : ["42424", "42424"] 
+                  });
+                }
+                if(mounted){
+                  Navigator.pop(context); //Dismiss loading indicator
+                  if(postCreated){
+                    CustomSnackbar.message(msg: "Pet profile created successfully");
+                    Navigator.pop(context);
+                  }else{
+                    //Operation unsuccessful
+                    // Delete pet images from firebase storage
+                    FirebaseStorageService.deleteMultipleFiles(
+                      fileUrls: imgUrls
+                    );
+                    
+                  }
+                }
+              },
+              text: "Submit",
+            ),
           ),
         )
       ),
@@ -184,7 +189,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 
               ],
             ),
-            if(_selectedStatus!=PetStatus.abandoned)
+            if(_selectedStatus!=PetStatus.missing)
               Column(
                 children: [
                   const SizedBox(height: 18,),
@@ -233,20 +238,23 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                   if(_petImages.length<5)
                     InkWell(
                       onTap: ()async{
-                        FileUtils.pickImageFromGallery().then((pickedImage){
-                          if(pickedImage==null) return;
-                          final File img = File(pickedImage.path);
-                          double fileSize = FileUtils.fileSizeKB(img);
-                          log("File : ${pickedImage.path} size $fileSize KB");
-                          if (fileSize <= 2048) {
-                            _petImages.add(img);
-                            setState(() {});
-                          } else {
-                            CustomSnackbar.message(
-                              msg: "Image size can't be greater than 2Mb."
-                            );
-                          }
-                        });
+                        final imgFile = await FileUtils.pickAndCropImage();
+                        if(imgFile!=null){
+                          _petImages.add(imgFile);
+                          setState(() {});
+                        }
+                        // FileUtils.pickImageFromGallery().then((pickedImage){
+                        //   if(pickedImage==null) return;
+                        //   final File img = File(pickedImage.path);
+                        //   double fileSize = FileUtils.fileSizeKB(img);
+                        //   log("File : ${pickedImage.path} size $fileSize KB");
+                        //   if (fileSize <= 2048) {
+                        //   } else {
+                        //     CustomSnackbar.message(
+                        //       msg: "Image size can't be greater than 2Mb."
+                        //     );
+                        //   }
+                        // });
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),
@@ -283,7 +291,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               ),
             ),
 
-
+            
             const SizedBox(height: 100,),
               
           ],

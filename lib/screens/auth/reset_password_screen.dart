@@ -1,5 +1,6 @@
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/auth/sign_in_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
@@ -14,18 +15,16 @@ import 'package:adopt_us/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({Key? key}) : super(key: key);
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends State<ResetPasswordScreen> {
   final _formkey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _cfPasswordController = TextEditingController();
 
@@ -33,9 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose();
     _cfPasswordController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -62,12 +59,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const AppIconWidget(),
                   const SizedBox(height: 36,),
                   CustomTextField(
-                    controller: _nameController,
-                    hintText: " Name",
-                    validator: TextValidator.validateName,
-                  ),
-                  const SizedBox(height: 18,),
-                  CustomTextField(
                     controller: _emailController,
                     hintText: " Email",
                     validator: TextValidator.validateEmail,
@@ -75,21 +66,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 18,),
                   CustomTextField(
-                    controller: _phoneController,
-                    hintText: " Phone",
-                    validator: TextValidator.validatePhoneNumber,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 18,),
-                  CustomTextField(
                     controller: _passwordController,
-                    hintText: " Password",
+                    hintText: " New Password",
                     validator: TextValidator.validatePassword,
                   ),
                   const SizedBox(height: 18,),
                   CustomTextField(
                     controller: _cfPasswordController,
-                    hintText: " Confirm Password",
+                    hintText: " Confirm New Password",
                     validator: (confirmPassword)=> TextValidator.validateConfirmPassword(
                       confirmPassword, _passwordController.text
                     ),
@@ -102,45 +86,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return;
                       }
                       customLoadingIndicator(context: context,canPop: false);
-                      final token = await AuthService.signUp(
-                        name: _nameController.text.trim(), 
-                        email: _emailController.text.trim(), 
-                        phone: _phoneController.text.trim(), 
-                        password: _passwordController.text.trim()
+                      final res = await AuthService.resetPassword(
+                        email: _emailController.text, 
+                        password: _passwordController.text
                       );
                       if(mounted){
                         Navigator.pop(context); //dismiss loading indicator
                       }
-                      if(token!=null){
+                      if(res==true){
                         //Sign Up Successfull
-                        CustomSnackbar.success(msg: "Account Created Successfully");
+                        CustomSnackbar.success(msg: "Password Reset Successful");
                         await Get.delete<UserController>();
-                        await UserPrefs.setToken(value: token);
                         if(mounted){
-                          AppNavigator.pushAndRemoveUntil(context, const SplashScreen());
+                          Navigator.pop(context);
                         }
+                      }else{
+                        CustomSnackbar.error(error: "Couldn't Reset Password");
                       }
                     },
-                    text: "Sign Up",
-                  ),
-                  const SizedBox(height: 18,),
-                  const Text(
-                    "Already have an account? ",
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      unfocus(context);
-                      Get.back();
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: Text(
-                        "Sign In",
-                        style: TextStyle(
-                          color: Themes.colorSecondary,
-                        ),
-                      ),
-                    ),
+                    text: "Submit",
                   ),
                   const SizedBox(height: 18,),
                 ]

@@ -1,6 +1,5 @@
 
 import 'package:adopt_us/config/constants.dart';
-import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/custom_icon_button.dart';
@@ -79,6 +78,20 @@ class SelectedUserProfile extends StatelessWidget {
                   }
                 : null
               ),
+              // if(user.address!=null)
+                optionWidget(
+                  label: "${user.address?.addressLine}",
+                  trailingIcon: Icons.location_on,
+                  trailingColor: Colors.blue,
+                  onTap: user.email?.isNotEmpty==true
+                  ? ()async{
+                      // if (!await launchUrl(Uri.parse("mailto:${user.email}"))) {
+                      //   CustomSnackbar.error(error: "error");
+                      // }
+                    }
+                  : null
+                ),
+              
               
               // Row(
               //   children: [
