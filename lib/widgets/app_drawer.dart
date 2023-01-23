@@ -4,6 +4,7 @@ import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/screens/auth/sign_in_screen.dart';
+import 'package:adopt_us/screens/pet/favorite_pets_screen.dart';
 import 'package:adopt_us/screens/request/all_requests_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
@@ -52,7 +53,8 @@ class AppDrawer extends StatelessWidget {
               ),
               _DrawerTile(
                 onTap: (){
-                  
+                  Navigator.pop(context);
+                  AppNavigator.push(context, FavoritePetsScreen());
                 }, 
                 icon: Icons.favorite_border_outlined, 
                 title: "Favorites",
@@ -65,7 +67,7 @@ class AppDrawer extends StatelessWidget {
                   _bottomNavController.changeRoute(index: 1);
                 }, 
                 icon: CupertinoIcons.search,
-                title: "Find Pet",
+                title: "Missing Pets",
                 isSelected: _bottomNavController.currentIndex==1,
               ),
               _DrawerTile(
@@ -86,22 +88,7 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.logout,
                   title: "Sign Out",
                 ),
-              // ? _DrawerTile(
-              //     onTap: ()async{
-              //       Navigator.pop(context);
-              //       AppNavigator.push(context, const SignInScreen());
-              //     }, 
-              //     icon: Icons.login,
-              //     title: "Sign In",
-              //   )
-              // : _DrawerTile(
-              //     onTap: ()async{
-              //       _userController.logOut();
-              //       AppNavigator.pushAndRemoveUntil(context, const SplashScreen());
-              //     }, 
-              //     icon: Icons.logout,
-              //     title: "Sign Out",
-              //   ),
+             
               _DrawerTile(
                 onTap: (){
                   Navigator.pop(context);

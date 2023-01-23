@@ -155,10 +155,10 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 60,),
                 Divider(),
-                optionWidget(
-                  label: "Settings",
-                  icon: Icons.settings
-                ),
+                // optionWidget(
+                //   label: "Settings",
+                //   icon: Icons.settings
+                // ),
                 optionWidget(
                   label: "My Pets",
                   icon: Icons.pets,

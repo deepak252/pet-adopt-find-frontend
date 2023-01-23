@@ -15,20 +15,21 @@ class ChatSocketService{
 
   static IO.Socket? _socket;
   // static ? socketIdCompleter;
-  static final _userController = Get.put(UserController());
+  // static final _userController = Get.put(UserController());
 
   /// Create Connection
   Future<String?> createConnection({
+    required int userId,
     Function(dynamic)? onNewMessage,
     Function(dynamic)? onGetMessages,
     Function(dynamic)? onGetRooms,
     Function(dynamic)? onGetLiveUsers,
   })async{
-    final user = _userController.user;
+    // final user = _userController.user;
     Completer<String> socketIdCompleter =  Completer<String>();
-    if(user==null){
-      return "Not Signed In";
-    }
+    // if(user==null){
+    //   return "Not Signed In";
+    // }
     try {
       
       if(isConnected()){
@@ -50,7 +51,7 @@ class ChatSocketService{
           _debug.message("createConnection",'SOCKET CONNECTED: ${_socket?.id}');
           
           // _socket?.emit("live",{"email" : user.email});
-          _socket?.emit("live",{"userId" : user.userId});
+          _socket?.emit("live",{"userId" : userId});
 
           if(socketIdCompleter.isCompleted!=true){
             socketIdCompleter.complete(_socket?.id);

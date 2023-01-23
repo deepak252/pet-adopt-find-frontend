@@ -33,6 +33,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
 
+  final _passwordVisibilityNotifier = ValueNotifier<bool>(false);
+
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -69,10 +72,17 @@ class _SignInScreenState extends State<SignInScreen> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _passwordController,
-                    hintText: " Password",
-                    validator: TextValidator.validatePassword,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _passwordVisibilityNotifier,
+                    builder: (context,_passwordVisible, child) {
+                      return CustomTextField(
+                        controller: _passwordController,
+                        hintText: " Password",
+                        obscureText: !_passwordVisible,
+                        suffixIcon: passwordVisibilityIcon(_passwordVisibilityNotifier),
+                        validator: TextValidator.validatePassword,
+                      );
+                    }
                   ),
                   const SizedBox(height: 12,),
                   Align(
@@ -149,6 +159,24 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
       ),
+    );
+
+    
+  }
+
+  IconButton  passwordVisibilityIcon(ValueNotifier<bool> _visibilityNotifier){
+    return IconButton(
+      splashRadius: 1,
+      icon: Icon(
+        // Based on passwordVisible state choose the icon
+        _visibilityNotifier.value ? Icons.visibility : Icons.visibility_off,
+        color: Themes.colorSecondary,
+        size: 23,
+      ),
+      onPressed: () {
+        _visibilityNotifier.value = !_visibilityNotifier.value;
+      },
+      padding: const EdgeInsets.only(right: 8),
     );
   }
 }

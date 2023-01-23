@@ -4,6 +4,7 @@ import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/chat_controller.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
+import 'package:adopt_us/models/notification_model.dart';
 import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/services/user_service.dart';
@@ -17,6 +18,11 @@ class UserController extends GetxController{
   final  _user = Rxn<User>();
   User? get user => _user.value;
   bool get isSignedIn => user!=null;
+
+  final _loadingNotifications = false.obs;
+  bool get loadingNotifications => _loadingNotifications.value;
+  final  _notifications = Rxn<List<NotificationModel>>();
+  List<NotificationModel> get notifications => _notifications.value??[];
   
   String? _token = UserPrefs.token;
 
@@ -43,6 +49,7 @@ class UserController extends GetxController{
     super.onInit();
     
     fetchProfile();
+    fetchNotifications();
     
   }
 
@@ -56,16 +63,7 @@ class UserController extends GetxController{
     }
     final result = await UserService.getProfile(token: UserPrefs.token!);
     _user(result);
-    // if(user!=null){
-    //   // final String? fcmToken = await FCMService.getFcmToken();
-    //   // log("FCM Token $fcmToken");
-    //   // UserService.updateProfile(
-    //   //   token: _token!,
-    //   //   data: {
-    //   //     "fcmToken" : fcmToken
-    //   //   }
-    //   // );
-    // }
+    
     if(enableLoading){
       _loading(false);
     }
@@ -88,8 +86,40 @@ class UserController extends GetxController{
     return false;
   }
 
+  Future fetchNotifications({bool enableLoading = false})async{
+    if(_token == null || loadingNotifications){
+      return;
+    }
+    if(enableLoading){
+      _loadingNotifications(true);
+    }
+    final notifs = await UserService.getNotifications(
+      token: _token!,
+    );
+    if(notifs!=null){
+      _notifications(notifs);
+    }
+    if(enableLoading){
+      _loadingNotifications(false);
+    }
+  }
+
+  Future<bool> markNotificationRead(int notificationId)async{
+    if(_token==null){
+      return false;
+    }
+    // log("${data}");
+    await UserService.markNotificationRead(
+      token: _token!,
+      notificationId: notificationId.toString()
+    );
+    fetchNotifications();
+    return true;
+  }
+
   Future logOut()async{
     _user(null);
+    Get.put(ChatController()).disConnect();
     await UserPrefs.clearData();
     await Get.delete<ChatController>();
     await Get.delete<BottomNavController>();

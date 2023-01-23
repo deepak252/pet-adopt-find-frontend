@@ -33,6 +33,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   final _cfPasswordController = TextEditingController();
 
+  final _passwordVisibilityNotifier = ValueNotifier<bool>(false);
+  final _cfPasswordVisibilityNotifier = ValueNotifier<bool>(false);  //for confirm password
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -85,18 +88,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _passwordController,
-                    hintText: " Password",
-                    validator: TextValidator.validatePassword,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _passwordVisibilityNotifier,
+                    builder: (context,_passwordVisible, child) {
+                      return CustomTextField(
+                        controller: _passwordController,
+                        hintText: " Password",
+                        obscureText: !_passwordVisible,
+                        suffixIcon: passwordVisibilityIcon(_passwordVisibilityNotifier),
+                        validator: TextValidator.validatePassword,
+                      );
+                    }
                   ),
                   const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _cfPasswordController,
-                    hintText: " Confirm Password",
-                    validator: (confirmPassword)=> TextValidator.validateConfirmPassword(
-                      confirmPassword, _passwordController.text
-                    ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _cfPasswordVisibilityNotifier,
+                    builder: (context,_cfPasswordVisible, child) {
+                      return CustomTextField(
+                        controller: _cfPasswordController,
+                        hintText: " Confirm Password",
+                        obscureText: !_cfPasswordVisible,
+                        suffixIcon: passwordVisibilityIcon(_cfPasswordVisibilityNotifier),
+                        validator: (confirmPassword)=> TextValidator.validateConfirmPassword(
+                          confirmPassword, _passwordController.text
+                        ),
+                      );
+                    }
                   ),
                   
                   const SizedBox(height: 36,),
@@ -157,6 +174,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  IconButton  passwordVisibilityIcon(ValueNotifier<bool> _visibilityNotifier){
+    return IconButton(
+      icon: Icon(
+        // Based on passwordVisible state choose the icon
+        _visibilityNotifier.value ? Icons.visibility : Icons.visibility_off,
+        color: Themes.colorSecondary,
+        size: 23,
+      ),
+      onPressed: () {
+        _visibilityNotifier.value = !_visibilityNotifier.value;
+      },
+      padding: const EdgeInsets.only(right: 8),
     );
   }
 }

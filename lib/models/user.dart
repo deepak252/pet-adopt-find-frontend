@@ -10,6 +10,8 @@ class User {
   String? profilePic;
   String? fcmToken;
   Address? address;
+  String? favPetIds;
+  List<int>? adoptPetIds;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -24,6 +26,7 @@ class User {
     this.profilePic,
     this.fcmToken,
     this.address,
+    this.favPetIds,
     this.createdAt,
     this.updatedAt,
   });
@@ -39,6 +42,7 @@ class User {
     address: json["address"]!=null 
     ? Address.fromJson(jsonDecode(json["address"]))
     : null,
+    favPetIds: json["favouritePetsId"],
     createdAt: DateTime.tryParse(json["createdAt"]??''),
     updatedAt: DateTime.tryParse(json["updatedAt"]??''),
   );
@@ -80,5 +84,19 @@ class User {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
+  }
+}
+
+extension UserAndPet on User{
+  List<int>? get getFavPetIds{
+    if(favPetIds==null){
+      return [];
+    }
+    List<String> strIds = favPetIds!.split(',').toList();
+    List<int> ids=[];
+    for(int i=0;i<strIds.length;i++){
+      ids.add(int.tryParse(strIds[i])??-1);
+    }
+    return ids;
   }
 }

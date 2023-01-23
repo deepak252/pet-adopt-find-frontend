@@ -1,5 +1,7 @@
 import 'package:adopt_us/config/pet_status.dart';
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
+import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/services/pet_service.dart';
 import 'package:adopt_us/storage/user_prefs.dart';
 import 'package:get/get.dart';
@@ -27,6 +29,12 @@ class PetController extends GetxController{
   final  _myPets = Rxn<List<Pet>>();
   List<Pet> get myPets => _myPets.value??[];
 
+
+  final _loadingSpecificFav = {}.obs;
+  bool loadingSpecificFav(int petId){
+    return _loadingSpecificFav[petId]==true;
+  }
+
   final _loadingFavPets = false.obs;
   bool get loadingFavPets => _loadingFavPets.value;
   final  _favPets = Rxn<List<Pet>>();
@@ -44,7 +52,7 @@ class PetController extends GetxController{
   // final  _abandonedPets = Rxn<List<Pet>>();
   // List<Pet> get abandonedPets => _abandonedPets.value??[];
 
-  
+  final _userController = Get.put(UserController());
   String? _token = UserPrefs.token;
   
   @override
@@ -200,37 +208,38 @@ class PetController extends GetxController{
     }
   }
 
-  Future<bool> addPetToFav(int petId)async{
-    if(_token==null){
+  Future<bool> toggleFavoritePet(int petId)async{
+    final user = _userController.user;
+    if(_token==null || user==null || loadingSpecificFav(petId)){
       return false;
     }
+    bool isFavPet = user.getFavPetIds?.contains(petId) ==true;
+    if(isFavPet){
+      return await removePetFromFav(petId);
+    }else{
+      return await addPetToFav(petId);
+    }
+  }
+
+  Future<bool> addPetToFav(int petId)async{
     final result = await PetService.addPetToFav(
       token: _token!,
       petId: petId
     );
     if(result!=null){
-      // fetchAllPets();
-      // fetchSurrendedPets();
-      // fetchMissingPets();
-      // fetchMyPets();
+      await _userController.fetchProfile();
       return result;
     }
     return false;
   }
 
   Future<bool> removePetFromFav(int petId)async{
-    if(_token==null){
-      return false;
-    }
     final result = await PetService.removePetFromFav(
       token: _token!,
       petId: petId
     );
     if(result!=null){
-      // fetchAllPets();
-      // fetchSurrendedPets();
-      // fetchMissingPets();
-      // fetchMyPets();
+      await _userController.fetchProfile();
       return result;
     }
     return false;

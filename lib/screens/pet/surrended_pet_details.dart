@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
+import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/screens/request/specific_pet_requests_screen.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
@@ -19,6 +21,7 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
   SurrendedPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
 
   final _requestController = Get.put(RequestController());
+  final _petController =  Get.put(PetController());
   final _userController = Get.put(UserController());
   
   @override
@@ -27,19 +30,24 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           actions: [
-            GestureDetector(
-              onTap: (){
-                
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.favorite_outline_outlined,
-                  color: Colors.redAccent,
-                  size : 34
+            Obx((){
+              bool isFavorite = _userController.user?.getFavPetIds?.contains(pet.petId)==true;
+              return GestureDetector(
+                onTap: (){
+                  _petController.toggleFavoritePet(pet.petId);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_outline_outlined,
+                    color: Colors.redAccent,
+                    size: 34,
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
           ],
         ),
         extendBodyBehindAppBar: true,

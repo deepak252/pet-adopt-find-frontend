@@ -147,7 +147,7 @@ abstract class PetService{
   static Future<List<Pet>?> getFavPets({required String token}) async {
     return await HttpUtils.get(
       methodName: "getFavPets", 
-      api: ApiPath.myPets,
+      api: ApiPath.getFavPets,
       token: token,
       onSuccess: (res)async{
         if(res?['data']!=null){
@@ -172,7 +172,7 @@ abstract class PetService{
     required String token,
     required int petId
   }) async {
-    return await HttpUtils.post(
+    return await HttpUtils.put(
       methodName: "addPetToFav", 
       api: "${ApiPath.addPetToFav}/$petId",
       token: token,
@@ -191,7 +191,7 @@ abstract class PetService{
     required String token,
     required int petId
   }) async {
-    return await HttpUtils.post(
+    return await HttpUtils.put(
       methodName: "removePetFromFav", 
       api: "${ApiPath.removePetFromFav}/$petId",
       token: token,

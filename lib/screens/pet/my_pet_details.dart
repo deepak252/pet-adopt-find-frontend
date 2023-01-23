@@ -6,6 +6,7 @@ import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/pet/edit_pet_screen.dart';
+import 'package:adopt_us/screens/request/specific_pet_requests_screen.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
@@ -157,12 +158,11 @@ class MyPetDetails extends StatelessWidget {
             if(pet.user?.userId == _userController.user?.userId){
               return CustomElevatedButton(
                 onPressed: ()async{
-                  // customLoadingIndicator(context: context,canPop: false);
-                  // bool res =await  _requestController.sendAdoptRequest(pet.petId.toString());
-                  // Navigator.pop(context);
-                  // if(res){
-                  //   CustomSnackbar.message(msg: "Request sent");
-                  // }
+                  _requestController.fetchSpecificPetRequests(pet.petId);
+                  AppNavigator.push(
+                    context, 
+                    SpecificPetRequestsScreen(pet: pet)
+                  );
                 },
                 text: "Show Requests",
               );
