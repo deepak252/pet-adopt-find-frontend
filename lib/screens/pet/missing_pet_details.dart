@@ -16,25 +16,10 @@ class MissingPetDetailsScreen extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    log("${pet.photos}");
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          actions: [
-            GestureDetector(
-              onTap: (){
-                
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.favorite_outline_outlined,
-                  color: Colors.redAccent,
-                  size : 30
-                ),
-              ),
-            ),
-          ],
+          
         ),
         extendBodyBehindAppBar: true,
         body: Column(

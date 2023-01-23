@@ -5,9 +5,11 @@ import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/screens/create_pet_screen.dart';
+import 'package:adopt_us/screens/google_map_screen.dart';
 import 'package:adopt_us/screens/pet/surrended_pet_details.dart';
 import 'package:adopt_us/services/fcm_service.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
+import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/no_result_widget.dart';
 import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +54,15 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     return Scaffold(
       body : Obx((){
         if(!_userController.isSignedIn){
-          return const NotSignedIn();
+          return CustomElevatedButton(
+            onPressed: (){
+              AppNavigator.push(context, GoogleMapScreen(
+                
+              ));
+            },
+            text: "TEST",
+          );
+          // return const NotSignedIn();
         }
         if(_petController.loadingSurrenderPets){
           return const Center(
@@ -184,7 +194,6 @@ class PetWidget extends StatelessWidget {
               child: Icon(
                   Icons.favorite_outline_outlined,
                   color: Colors.redAccent,
-
                 ),
             ),
           ),

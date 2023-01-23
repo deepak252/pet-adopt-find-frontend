@@ -67,11 +67,13 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               title: Text(
-                index<2
+                index==0
                 ? "Adopt Us"
-                : index==2
-                  ? "Messages"
-                  : "Profile",
+                : index==1
+                  ? "Missing Pets"
+                  : index==2
+                    ? "Messages"
+                    : "Profile",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 20

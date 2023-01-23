@@ -7,8 +7,10 @@ import 'package:adopt_us/config/pet_gender.dart';
 import 'package:adopt_us/config/pet_status.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/google_map_screen.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
-import 'package:adopt_us/services/location_utils.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
+import 'package:adopt_us/utils/location_utils.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
@@ -73,7 +75,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isKeyoboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
     return GestureDetector(
       onTap: ()=>unfocus(context),
@@ -87,7 +89,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Visibility(
-          visible: !isKeyoboardOpen,
+          visible: !isKeyboardOpen,
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: CustomElevatedButton(
@@ -120,6 +122,18 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 )..removeWhere((e) => e==null);
                 log("$imgUrls");
                 if(imgUrls.isNotEmpty){
+                  Map location = {};
+                  if(_selectedStatus==PetStatus.missing){
+                    location = {
+                      "addressLine" : _addrLineController.text,
+                      "city" : _cityController.text,
+                      "state" : _stateController.text,
+                      "country" : _countryController.text,
+                      "pincode" : _pincodeController.text,
+                      "latitude" : double.tryParse(_latController.text),
+                      "longitude" : double.tryParse(_latController.text)
+                    };
+                  }
                   postCreated = await _petController.createPet({
                     "userId" : _userController.user!.userId,
                     "petName" : _petNameController.text,
@@ -130,14 +144,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                     "gender" : _selectedGender,
                     "petInfo" : _petDescriptionController.text,
                     "category" : _selectedCategory,
-                    
-                    "addressLine" : _addrLineController.text,
-                    "city" : _cityController.text,
-                    "state" : _stateController.text,
-                    "country" : _countryController.text,
-                    "pincode" : _pincodeController.text,
-                    "latitude" : double.parse(_latController.text),
-                    "longitude" : double.parse(_latController.text),
+                    ...location
                   });
                 }
                 if(mounted){
@@ -210,26 +217,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 
               ],
             ),
-            // if(_selectedStatus!=PetStatus.missing)
-              // Column(
-              //   children: [
-              //     const SizedBox(height: 18,),
-              //     CustomTextField(
-              //       controller: _petNameController,
-              //       hintText: " Name",
-              //       validator: TextValidator.validateName,
-              //     ),
-              //     const SizedBox(height: 18),
-              //     CustomTextField(
-              //       controller: _petAgeController,
-              //       hintText: " Age",
-              //       keyboardType: TextInputType.number,
-              //       inputFormatters: [
-              //         FilteringTextInputFormatter.digitsOnly
-              //       ],
-              //     ),
-              //   ],
-              // ),
 
             const SizedBox(height: 18,),
             CustomTextField(
@@ -273,26 +260,58 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                     ),
                     InkWell(
                       onTap: ()async{
+
                         customLoadingIndicator(context: context, canPop: false);
-                        final location =await LocationUtils.getCurrentLocation();
-                        if(mounted){
-                          Navigator.pop(context);
-                          if(location!=null){
-                            setState(() {
-                              _addrLineController.text=(location.name??'') +', '+ (location.sublocality??'');
-                              _cityController.text=location.city??'';
-                              _stateController.text=location.state??'';
-                              _countryController.text=location.country??'';
-                              _pincodeController.text=location.pincode??'';
-                              _latController.text=location.latitude.toStringAsFixed(4);
-                              _lngController.text=location.longitude.toStringAsFixed(4);
-                            });
-                          }
+                        var location =await LocationUtils.getCurrentLocation();
+                        Navigator.pop(context);
+                        if(location==null){
+                          CustomSnackbar.error(error: "Can't find location");
+                          return;
                         }
+                        final latlng = await AppNavigator.push(
+                          context, GoogleMapScreen(
+                            lat: location.latitude,
+                            lng: location.longitude,
+                          )
+                        );
+                        if(latlng==null || latlng is! List){
+                          return;
+                        }
+                        if(latlng.length>1){
+                          location = await LocationUtils.getAddressFromCoordinaties(
+                            latlng[0], latlng[1]);
+                          setState(() {
+                            _addrLineController.text=(location!.name??'') +', '+ (location.sublocality??'');
+                            _cityController.text=location.city??'';
+                            _stateController.text=location.state??'';
+                            _countryController.text=location.country??'';
+                            _pincodeController.text=location.pincode??'';
+                            _latController.text=location.latitude.toStringAsFixed(4);
+                            _lngController.text=location.longitude.toStringAsFixed(4);
+                          });
+                        }
+
+
+                        // customLoadingIndicator(context: context, canPop: false);
+                        // final location =await LocationUtils.getCurrentLocation();
+                        // if(mounted){
+                        //   Navigator.pop(context);
+                        //   if(location!=null){
+                        //     setState(() {
+                        //       _addrLineController.text=(location.name??'') +', '+ (location.sublocality??'');
+                        //       _cityController.text=location.city??'';
+                        //       _stateController.text=location.state??'';
+                        //       _countryController.text=location.country??'';
+                        //       _pincodeController.text=location.pincode??'';
+                        //       _latController.text=location.latitude.toStringAsFixed(4);
+                        //       _lngController.text=location.longitude.toStringAsFixed(4);
+                        //     });
+                        //   }
+                        // }
 
                       },
                       child: const Text(
-                        "Use Current Location",
+                        "Select Location",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,

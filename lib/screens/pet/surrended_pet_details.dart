@@ -26,6 +26,21 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            GestureDetector(
+              onTap: (){
+                
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.favorite_outline_outlined,
+                  color: Colors.redAccent,
+                  size : 34
+                ),
+              ),
+            ),
+          ],
         ),
         extendBodyBehindAppBar: true,
         body: Column(

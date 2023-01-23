@@ -124,5 +124,87 @@ abstract class PetService{
     );
   }
 
+
+  static Future<Pet?> getPetById({
+    required String token,
+    required int petId
+  }) async {
+    return await HttpUtils.get(
+      methodName: "getPetById", 
+      api: "${ApiPath.getPetById}/$petId",
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return Pet.fromJson(res['data']);
+        }
+        return null;
+      },
+      debug: _debug,
+      showError: false
+    );
+  }
+
+  static Future<List<Pet>?> getFavPets({required String token}) async {
+    return await HttpUtils.get(
+      methodName: "getFavPets", 
+      api: ApiPath.myPets,
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          List<Pet> pets = [];
+          for(var petJson in res?['data']){
+            try{
+              pets.add(Pet.fromJson(petJson));
+            }catch(e,s){
+              _debug.error("getFavPets (Invalid json pet)", error: e, stackTrace: s);
+            }
+          }
+          return pets;
+        }
+        return null;
+      },
+      debug: _debug,
+      
+    );
+  }
+
+  static Future<bool?> addPetToFav({
+    required String token,
+    required int petId
+  }) async {
+    return await HttpUtils.post(
+      methodName: "addPetToFav", 
+      api: "${ApiPath.addPetToFav}/$petId",
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return true;
+        }
+        return null;
+      },
+      debug: _debug,
+      showError: false
+    );
+  }
+
+  static Future<bool?> removePetFromFav({
+    required String token,
+    required int petId
+  }) async {
+    return await HttpUtils.post(
+      methodName: "removePetFromFav", 
+      api: "${ApiPath.removePetFromFav}/$petId",
+      token: token,
+      onSuccess: (res)async{
+        if(res?['data']!=null){
+          return true;
+        }
+        return null;
+      },
+      debug: _debug,
+      showError: false
+    );
+  }
+
  
 }

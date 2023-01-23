@@ -56,21 +56,21 @@ class MissingPetsScreen extends StatelessWidget {
           ),
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: ()async {
-          await Get.bottomSheet(
-            _uploadImage(),
-            backgroundColor: Colors.white,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16)
-              )
-            )
-          );
-        },
-        child: Icon(Icons.search),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: ()async {
+      //     await Get.bottomSheet(
+      //       _uploadImage(),
+      //       backgroundColor: Colors.white,
+      //       shape: const RoundedRectangleBorder(
+      //         borderRadius: BorderRadius.only(
+      //           topLeft: Radius.circular(16),
+      //           topRight: Radius.circular(16)
+      //         )
+      //       )
+      //     );
+      //   },
+      //   child: Icon(Icons.search),
+      // ),
     );
   }
 
