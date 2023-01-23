@@ -1,6 +1,8 @@
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
-import 'package:adopt_us/services/location_utils.dart';
+import 'package:adopt_us/screens/google_map_screen.dart';
+import 'package:adopt_us/utils/location_utils.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
@@ -24,17 +26,17 @@ class _EditUserProfileScreenState
     extends State<EditUserProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
 
-  final TextEditingController _addrLineController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
-  final TextEditingController _pincodeController = TextEditingController();
-  final TextEditingController _countryController = TextEditingController();
-  final TextEditingController _latController = TextEditingController();
-  final TextEditingController _lngController = TextEditingController();
+  final  _addrLineController = TextEditingController();
+  final  _cityController = TextEditingController();
+  final  _stateController = TextEditingController();
+  final  _pincodeController = TextEditingController();
+  final  _countryController = TextEditingController();
+  final  _latController = TextEditingController();
+  final  _lngController = TextEditingController();
 
   final _userController =Get.put(UserController());
 
@@ -81,6 +83,7 @@ class _EditUserProfileScreenState
 
   @override
   Widget build(BuildContext context) {
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
     return WillPopScope(
       onWillPop: (){
         if(!widget.canPop){
@@ -128,35 +131,38 @@ class _EditUserProfileScreenState
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: CustomElevatedButton(
-              onPressed: ()async {
-                unfocus(context);
-                if(!_formKey.currentState!.validate()){
-                  return;
-                }
-                customLoadingIndicator(context: context, canPop: false);
-                bool result = await _userController.updateProfile({
-                  "fullName" : _nameController.text,
-                  "email" : _emailController.text,
-                  "mobile" : _phoneController.text,
-                  "addressLine" : _addrLineController.text,
-                  "city" : _cityController.text,
-                  "state" : _stateController.text,
-                  "country" : _countryController.text,
-                  "pincode" : _pincodeController.text,
-                  "latitude" : double.parse(_latController.text),
-                  "longitude" : double.parse(_latController.text),
-                });
-                if(mounted){
-                  Navigator.pop(context); //Dismiss loading indicator
-                  if(result){
-                    Navigator.pop(context);
+          floatingActionButton: Visibility(
+            visible: !isKeyboardOpen,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: CustomElevatedButton(
+                onPressed: ()async {
+                  unfocus(context);
+                  if(!_formKey.currentState!.validate()){
+                    return;
                   }
-                }
-              },
-              text: "Save",
+                  customLoadingIndicator(context: context, canPop: false);
+                  bool result = await _userController.updateProfile({
+                    "fullName" : _nameController.text,
+                    "email" : _emailController.text,
+                    "mobile" : _phoneController.text,
+                    "addressLine" : _addrLineController.text,
+                    "city" : _cityController.text,
+                    "state" : _stateController.text,
+                    "country" : _countryController.text,
+                    "pincode" : _pincodeController.text,
+                    "latitude" : double.parse(_latController.text),
+                    "longitude" : double.parse(_latController.text),
+                  });
+                  if(mounted){
+                    Navigator.pop(context); //Dismiss loading indicator
+                    if(result){
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                text: "Save",
+              ),
             ),
           )
         ),
@@ -204,26 +210,56 @@ class _EditUserProfileScreenState
               InkWell(
                 onTap: ()async{
                   customLoadingIndicator(context: context, canPop: false);
-                  final location =await LocationUtils.getCurrentLocation();
-                  if(mounted){
-                    Navigator.pop(context);
-                    if(location!=null){
-                      setState(() {
-                        _addrLineController.text=(location.name??'') +', '+ (location.sublocality??'');
-                        _cityController.text=location.city??'';
-                        _stateController.text=location.state??'';
-                        _countryController.text=location.country??'';
-                        _pincodeController.text=location.pincode??'';
-                        _latController.text=location.latitude.toStringAsFixed(4);
-                        _lngController.text=location.longitude.toStringAsFixed(4);
-                      });
-
-                    }
+                  var location =await LocationUtils.getCurrentLocation();
+                  Navigator.pop(context);
+                  if(location==null){
+                    CustomSnackbar.error(error: "Can't find location");
+                    return;
                   }
+
+                  final latlng = await AppNavigator.push(
+                    context, GoogleMapScreen(
+                      lat: location.latitude,
+                      lng: location.longitude,
+                    )
+                  );
+                  if(latlng==null || latlng is! List){
+                    return;
+                  }
+                  if(latlng.length>1){
+                    location = await LocationUtils.getAddressFromCoordinaties(
+                      latlng[0], latlng[1]);
+                    setState(() {
+                      _addrLineController.text=(location!.name??'') +', '+ (location.sublocality??'');
+                      _cityController.text=location.city??'';
+                      _stateController.text=location.state??'';
+                      _countryController.text=location.country??'';
+                      _pincodeController.text=location.pincode??'';
+                      _latController.text=location.latitude.toStringAsFixed(4);
+                      _lngController.text=location.longitude.toStringAsFixed(4);
+                    });
+                  }
+                  // final location =await LocationUtils.getCurrentLocation();
+                  // if(mounted){
+                  //   Navigator.pop(context);
+                  //   if(location!=null){
+                  //     setState(() {
+                  //       _addrLineController.text=(location.name??'') +', '+ (location.sublocality??'');
+                  //       _cityController.text=location.city??'';
+                  //       _stateController.text=location.state??'';
+                  //       _countryController.text=location.country??'';
+                  //       _pincodeController.text=location.pincode??'';
+                  //       _latController.text=location.latitude.toStringAsFixed(4);
+                  //       _lngController.text=location.longitude.toStringAsFixed(4);
+                  //     });
+
+                  //   }
+                  // }
 
                 },
                 child: const Text(
-                  "Use Current Location",
+                  // "Use Current Location",
+                  "Select Location",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,

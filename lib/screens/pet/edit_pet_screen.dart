@@ -75,8 +75,7 @@ class _EditPetScreenState extends State<EditPetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log("${widget.pet.gender==null}");
-    log("${widget.pet.category}");
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
     return GestureDetector(
       onTap: ()=>unfocus(context),
       child: Scaffold(
@@ -87,76 +86,79 @@ class _EditPetScreenState extends State<EditPetScreen> {
         ),
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: CustomElevatedButton(
-            onPressed: ()async {
-              unfocus(context);
-              bool petUpdated=false;
-              if(!_userController.isSignedIn){
-                return CustomSnackbar.error(error: "Not Signed In");
-              }
-              if(!_formKey.currentState!.validate()){
-                log("Invalid form");
-                return;
-              }
-              if(_oldImages.isEmpty && _newImages.isEmpty){
-                return CustomSnackbar.error(error: "Upload Pet Image");
-              }
-              customLoadingIndicator(context: context,canPop : false);
-              // Upload pet images to firebase
-              var newImgUrls = await Future.wait(
-                _newImages.map((img)async{
-                  String? fileName = FileUtils.getFileNameFromPath(img.path);
-                  if(fileName!=null){
-                    return  FirebaseStorageService.uploadFile(
-                        file : img,
-                        fileName: fileName,
-                        path: StoragePath.petPic
-                    );
-                  }
-                })
-              )..removeWhere((e) => e==null);
-              log("newImgUrls : $newImgUrls");
-              if(_oldImages.isNotEmpty || newImgUrls.isNotEmpty){
-                petUpdated = await _petController.editPet({
-                  "petId" : widget.pet.petId,
-                  "userId" : _userController.user!.userId,
-                  "petName" : _petNameController.text,
-                  "breed" : _breedController.text,
-                  "age" : _petAgeController.text,
-                  "photos" : [..._oldImages,...newImgUrls],
-                  "petStatus" : _selectedStatus,
-                  "gender" : _selectedGender,
-                  "petInfo" : _petDescriptionController.text,
-                  "category" : _selectedCategory
-                });
-              }
-              if(mounted){
-                Navigator.pop(context); //Dismiss loading indicator
-                if(petUpdated){
-                  CustomSnackbar.message(msg: "Pet profile updated successfully");
-                  //Operation successful
-                  // Delete removed images from firebase storage
-                  List imgsToRemove = [];
-                  for(var img in widget.pet.photos){
-                    if(!_oldImages.contains(img)){
-                      imgsToRemove.add(img);
-                    }
-                  }
-                  log("imgsToRemove : $imgsToRemove");
-                  FirebaseStorageService.deleteMultipleFiles(fileUrls: imgsToRemove);
-                 
-                  Navigator.pop(context);
-                }else{
-                  //Operation unsuccessful
-                  // Delete new images from firebase storage
-                  FirebaseStorageService.deleteMultipleFiles(fileUrls: newImgUrls);
-                  
+        floatingActionButton: Visibility(
+          visible: !isKeyboardOpen,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: CustomElevatedButton(
+              onPressed: ()async {
+                unfocus(context);
+                bool petUpdated=false;
+                if(!_userController.isSignedIn){
+                  return CustomSnackbar.error(error: "Not Signed In");
                 }
-              }
-            },
-            text: "Update",
+                if(!_formKey.currentState!.validate()){
+                  log("Invalid form");
+                  return;
+                }
+                if(_oldImages.isEmpty && _newImages.isEmpty){
+                  return CustomSnackbar.error(error: "Upload Pet Image");
+                }
+                customLoadingIndicator(context: context,canPop : false);
+                // Upload pet images to firebase
+                var newImgUrls = await Future.wait(
+                  _newImages.map((img)async{
+                    String? fileName = FileUtils.getFileNameFromPath(img.path);
+                    if(fileName!=null){
+                      return  FirebaseStorageService.uploadFile(
+                          file : img,
+                          fileName: fileName,
+                          path: StoragePath.petPic
+                      );
+                    }
+                  })
+                )..removeWhere((e) => e==null);
+                log("newImgUrls : $newImgUrls");
+                if(_oldImages.isNotEmpty || newImgUrls.isNotEmpty){
+                  petUpdated = await _petController.editPet({
+                    "petId" : widget.pet.petId,
+                    "userId" : _userController.user!.userId,
+                    "petName" : _petNameController.text,
+                    "breed" : _breedController.text,
+                    "age" : _petAgeController.text,
+                    "photos" : [..._oldImages,...newImgUrls],
+                    "petStatus" : _selectedStatus,
+                    "gender" : _selectedGender,
+                    "petInfo" : _petDescriptionController.text,
+                    "category" : _selectedCategory
+                  });
+                }
+                if(mounted){
+                  Navigator.pop(context); //Dismiss loading indicator
+                  if(petUpdated){
+                    CustomSnackbar.message(msg: "Pet profile updated successfully");
+                    //Operation successful
+                    // Delete removed images from firebase storage
+                    List imgsToRemove = [];
+                    for(var img in widget.pet.photos){
+                      if(!_oldImages.contains(img)){
+                        imgsToRemove.add(img);
+                      }
+                    }
+                    log("imgsToRemove : $imgsToRemove");
+                    FirebaseStorageService.deleteMultipleFiles(fileUrls: imgsToRemove);
+                   
+                    Navigator.pop(context);
+                  }else{
+                    //Operation unsuccessful
+                    // Delete new images from firebase storage
+                    FirebaseStorageService.deleteMultipleFiles(fileUrls: newImgUrls);
+                    
+                  }
+                }
+              },
+              text: "Update",
+            ),
           ),
         )
       ),

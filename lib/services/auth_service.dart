@@ -15,7 +15,7 @@ abstract class AuthService{
     return await HttpUtils.post<String?>(
       methodName: "signUp", 
       api: ApiPath.signUp, 
-      payload: {
+      body: {
         "fullName": name,
         "email": email,
         "password": password,
@@ -36,7 +36,7 @@ abstract class AuthService{
     return await HttpUtils.post<String?>(
       methodName: "signIn", 
       api: ApiPath.signIn, 
-      payload: {
+      body: {
         "email": email,
         "password": password,
       },
@@ -55,7 +55,7 @@ abstract class AuthService{
     return await HttpUtils.post<bool?>(
       methodName: "resetPassword", 
       api: ApiPath.resetPassword, 
-      payload: {
+      body: {
         "email": email,
         "newPassword": password,
       },

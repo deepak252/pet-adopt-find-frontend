@@ -1,7 +1,8 @@
-import 'dart:developer';
-
 import 'package:adopt_us/config/app_theme.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/chat_controller.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/auth/reset_password_screen.dart';
 import 'package:adopt_us/screens/auth/sign_up_screen.dart';
@@ -31,6 +32,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+
+  final _passwordVisibilityNotifier = ValueNotifier<bool>(false);
+
 
   @override
   void dispose() {
@@ -68,10 +72,17 @@ class _SignInScreenState extends State<SignInScreen> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _passwordController,
-                    hintText: " Password",
-                    validator: TextValidator.validatePassword,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _passwordVisibilityNotifier,
+                    builder: (context,_passwordVisible, child) {
+                      return CustomTextField(
+                        controller: _passwordController,
+                        hintText: " Password",
+                        obscureText: !_passwordVisible,
+                        suffixIcon: passwordVisibilityIcon(_passwordVisibilityNotifier),
+                        validator: TextValidator.validatePassword,
+                      );
+                    }
                   ),
                   const SizedBox(height: 12,),
                   Align(
@@ -110,6 +121,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         CustomSnackbar.success(msg: "Sign In Successful");
                         await Get.delete<UserController>();
                         await Get.delete<BottomNavController>();
+                        await Get.delete<ChatController>();
+                        await Get.delete<PetController>();
+                        await Get.delete<RequestController>();
                         await UserPrefs.setToken(value: token);
                         if(mounted){
                           AppNavigator.pushAndRemoveUntil(context, const SplashScreen());
@@ -145,6 +159,24 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
       ),
+    );
+
+    
+  }
+
+  IconButton  passwordVisibilityIcon(ValueNotifier<bool> _visibilityNotifier){
+    return IconButton(
+      splashRadius: 1,
+      icon: Icon(
+        // Based on passwordVisible state choose the icon
+        _visibilityNotifier.value ? Icons.visibility : Icons.visibility_off,
+        color: Themes.colorSecondary,
+        size: 23,
+      ),
+      onPressed: () {
+        _visibilityNotifier.value = !_visibilityNotifier.value;
+      },
+      padding: const EdgeInsets.only(right: 8),
     );
   }
 }

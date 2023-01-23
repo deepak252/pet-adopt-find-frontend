@@ -5,36 +5,20 @@ import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/models/pet.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
+import 'package:adopt_us/widgets/selected_user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MissingPetDetailsScreen extends StatelessWidget {
   final Pet pet;
-  MissingPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
+  const MissingPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
 
-  final _requestController = Get.put(RequestController());
-  
   @override
   Widget build(BuildContext context) {
-    log("${pet.photos}");
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          actions: [
-            GestureDetector(
-              onTap: (){
-                
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.favorite_outline_outlined,
-                  color: Colors.redAccent,
-                  size : 30
-                ),
-              ),
-            ),
-          ],
+          
         ),
         extendBodyBehindAppBar: true,
         body: Column(
@@ -127,6 +111,9 @@ class MissingPetDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: CustomElevatedButton(
             onPressed: ()async{
+              if(pet.user!=null){
+                showUserProfile(pet.user!);
+              }
             },
             text: "Contact",
           ),

@@ -7,7 +7,7 @@ import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/pet/my_pets_screen.dart';
 import 'package:adopt_us/screens/profile/edit_user_profile_screen.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
-import 'package:adopt_us/services/location_utils.dart';
+import 'package:adopt_us/utils/location_utils.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
@@ -155,10 +155,10 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 60,),
                 Divider(),
-                optionWidget(
-                  label: "Settings",
-                  icon: Icons.settings
-                ),
+                // optionWidget(
+                //   label: "Settings",
+                //   icon: Icons.settings
+                // ),
                 optionWidget(
                   label: "My Pets",
                   icon: Icons.pets,

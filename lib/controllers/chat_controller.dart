@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/chat.dart';
 import 'package:adopt_us/models/conversation_room.dart';
 import 'package:adopt_us/services/chat_socket_service.dart';
@@ -33,26 +34,23 @@ class ChatController extends GetxController{
   }
 
   final _chatSocket = ChatSocketService();
-  final _token = UserPrefs.token;
+  final _userController = Get.put(UserController());
+  String? _token = UserPrefs.token;
   
   @override
   void onInit() {
-    super.onInit();
+    _token = UserPrefs.token;
     connect();
-  }
-
-  @override
-  void dispose() {
-    _chatSocket.dispose();
-    super.dispose();
+    super.onInit();
   }
 
   Future connect()async{
-    if(_token==null){
+    if(_token==null || _userController.user==null){
       return;
     }
     _loadingRooms(true);
     final res = await _chatSocket.createConnection(
+      userId : _userController.user!.userId,
       onGetRooms: onGetRooms,
       onGetMessages: onGetMessages,
       onGetLiveUsers: onGetLiveUsers,
@@ -60,6 +58,10 @@ class ChatController extends GetxController{
     );
     log("ChatController -> connect : $res");
     _loadingRooms(false);
+  }
+
+  Future disConnect()async{
+    _chatSocket.dispose();
   }
 
   bool createRooom({

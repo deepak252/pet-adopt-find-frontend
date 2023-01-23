@@ -8,6 +8,7 @@ import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/utils/date_time_utils.dart';
 import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:adopt_us/widgets/chat_user_profile.dart';
+import 'package:adopt_us/widgets/not_signed_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,6 +27,9 @@ class _AllChatsScreenState extends State<AllChatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx((){
+        if(!_userController.isSignedIn){
+          return const NotSignedIn();
+        }
         if(_chatController.loadingRooms){
           return const Center(
             child: CircularProgressIndicator(),

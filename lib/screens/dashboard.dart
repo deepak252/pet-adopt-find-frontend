@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:adopt_us/config/image_path.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
-import 'package:adopt_us/controllers/chat_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/screens/chat/all_chats_screen.dart';
 import 'package:adopt_us/screens/missing_pets_screen.dart';
@@ -70,11 +67,13 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
               title: Text(
-                index<2
+                index==0
                 ? "Adopt Us"
-                : index==2
-                  ? "Messages"
-                  : "Profile",
+                : index==1
+                  ? "Missing Pets"
+                  : index==2
+                    ? "Messages"
+                    : "Profile",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 20

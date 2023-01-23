@@ -17,7 +17,17 @@ class RequestController extends GetxController{
   final  _reqMade = Rxn<List<Request>>();
   List<Request> get reqMade => _reqMade.value??[];
   
-  final _token = UserPrefs.token;
+  final _loadingPetRequests = false.obs;
+  bool get loadingPetRequests => _loadingPetRequests.value;
+  final  _specificPetRequests = Rxn<Map<int,List<Request>>>();
+  List<Request> specificPetRequests(int petId){
+    if(_specificPetRequests.value?[petId]!=null){
+      return _specificPetRequests.value![petId]??[];
+    }
+    return [];
+  }
+
+  String? _token = UserPrefs.token;
 
   bool isRequested(int petId){
     return reqMade.indexWhere((r) => petId==r.pet?.petId)!=-1;
@@ -25,6 +35,7 @@ class RequestController extends GetxController{
   
   @override
   void onInit() {
+    _token = UserPrefs.token;
     fetchRequestsReceived(enableLoading: true);
     fetchRequestsMade(enableLoading: true);
     super.onInit();
@@ -63,6 +74,30 @@ class RequestController extends GetxController{
     }
   }
 
+  Future fetchSpecificPetRequests(int petId)async{
+    if(_token==null){
+      return;
+    }
+    if(specificPetRequests(petId).isEmpty){
+      _loadingPetRequests(true);
+    }
+    final requests = await RequestService.specificPetRequests(
+      token: _token!,
+      petId: petId
+    );
+    if(requests!=null){
+      _specificPetRequests.update((val) {
+        if(val==null){
+          val = {petId : requests };
+        }else{
+          val[petId] = requests;
+        }
+        _specificPetRequests(val);
+      });
+    }
+    _loadingPetRequests(false);
+  }
+
   Future<bool> sendAdoptRequest(String petId)async{
     if(_token==null){
       return false;
@@ -78,6 +113,45 @@ class RequestController extends GetxController{
     }
     return false;
   }
+
+  Future<bool> updateRequestStatus({
+    required int requestId,
+    required String status
+  })async{
+    if(_token==null){
+      return false;
+    }
+    final result = await RequestService.updateRequest(
+      token: _token!,
+      requestId: requestId,
+      status: status
+    );
+    if(result!=null){
+      // fetchRequestsMade();
+      await fetchRequestsReceived();
+      return result;
+    }
+    return false;
+  }
+
+  Future<bool> deleteRequest({
+    required int requestId,
+  })async{
+    if(_token==null){
+      return false;
+    }
+    final result = await RequestService.deleteRequest(
+      token: _token!,
+      requestId: requestId,
+    );
+    if(result!=null){
+      await fetchRequestsMade();
+      return result;
+    }
+    return false;
+  }
+
+  
 
   
 

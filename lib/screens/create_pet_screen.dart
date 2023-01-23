@@ -7,7 +7,10 @@ import 'package:adopt_us/config/pet_gender.dart';
 import 'package:adopt_us/config/pet_status.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/screens/google_map_screen.dart';
 import 'package:adopt_us/services/firebase_storage_service.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
+import 'package:adopt_us/utils/location_utils.dart';
 import 'package:adopt_us/utils/file_utils.dart';
 import 'package:adopt_us/utils/misc.dart';
 import 'package:adopt_us/utils/text_validator.dart';
@@ -38,6 +41,15 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
   final _petAgeController = TextEditingController();
   final _petDescriptionController = TextEditingController();
   final _breedController = TextEditingController();
+
+  final  _addrLineController = TextEditingController();
+  final  _cityController = TextEditingController();
+  final  _stateController = TextEditingController();
+  final  _pincodeController = TextEditingController();
+  final  _countryController = TextEditingController();
+  final  _latController = TextEditingController();
+  final  _lngController = TextEditingController();
+
   List<File> _petImages=[];
   final _petController = Get.put(PetController());
   final _userController = Get.put(UserController());
@@ -50,12 +62,20 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
     _petAgeController.dispose();
     _petDescriptionController.dispose();
     _breedController.dispose();
+
+    _addrLineController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _pincodeController.dispose();
+    _countryController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isKeyoboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
 
     return GestureDetector(
       onTap: ()=>unfocus(context),
@@ -69,7 +89,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
 
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Visibility(
-          visible: !isKeyoboardOpen,
+          visible: !isKeyboardOpen,
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: CustomElevatedButton(
@@ -102,6 +122,18 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 )..removeWhere((e) => e==null);
                 log("$imgUrls");
                 if(imgUrls.isNotEmpty){
+                  Map location = {};
+                  if(_selectedStatus==PetStatus.missing){
+                    location = {
+                      "addressLine" : _addrLineController.text,
+                      "city" : _cityController.text,
+                      "state" : _stateController.text,
+                      "country" : _countryController.text,
+                      "pincode" : _pincodeController.text,
+                      "latitude" : double.tryParse(_latController.text),
+                      "longitude" : double.tryParse(_latController.text)
+                    };
+                  }
                   postCreated = await _petController.createPet({
                     "userId" : _userController.user!.userId,
                     "petName" : _petNameController.text,
@@ -111,12 +143,8 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                     "petStatus" : _selectedStatus,
                     "gender" : _selectedGender,
                     "petInfo" : _petDescriptionController.text,
-                    "category" : _selectedCategory
-                    // "addressLine" : "B-54, Andheri East",
-                    // "city" : "Mumbai",
-                    // "state" : "Maharastra",
-                    // "pincode" : "232424",
-                    // "coordinates" : ["42424", "42424"] 
+                    "category" : _selectedCategory,
+                    ...location
                   });
                 }
                 if(mounted){
@@ -189,38 +217,174 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                 
               ],
             ),
-            if(_selectedStatus!=PetStatus.missing)
-              Column(
-                children: [
-                  const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _petNameController,
-                    hintText: " Name",
-                    validator: TextValidator.validateName,
-                  ),
-                  const SizedBox(height: 18),
-                  CustomTextField(
-                    controller: _petAgeController,
-                    hintText: " Age",
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                  ),
-                  
-                  
-                ],
-              ),
+
+            const SizedBox(height: 18,),
+            CustomTextField(
+              controller: _petNameController,
+              hintText: " Name",
+              validator: TextValidator.validateName,
+            ),
+            const SizedBox(height: 18),
+            CustomTextField(
+              controller: _petAgeController,
+              hintText: " Age",
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly
+              ],
+            ),
             const SizedBox(height: 18,),
             CustomTextField(
               controller: _breedController,
               hintText: " Breed",
             ),
+
+
+
+
+            
+
+            
+            if(_selectedStatus==PetStatus.missing)
+            Column(
+              children: [
+                const SizedBox(height: 12,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Address",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: ()async{
+
+                        customLoadingIndicator(context: context, canPop: false);
+                        var location =await LocationUtils.getCurrentLocation();
+                        Navigator.pop(context);
+                        if(location==null){
+                          CustomSnackbar.error(error: "Can't find location");
+                          return;
+                        }
+                        final latlng = await AppNavigator.push(
+                          context, GoogleMapScreen(
+                            lat: location.latitude,
+                            lng: location.longitude,
+                          )
+                        );
+                        if(latlng==null || latlng is! List){
+                          return;
+                        }
+                        if(latlng.length>1){
+                          location = await LocationUtils.getAddressFromCoordinaties(
+                            latlng[0], latlng[1]);
+                          setState(() {
+                            _addrLineController.text=(location!.name??'') +', '+ (location.sublocality??'');
+                            _cityController.text=location.city??'';
+                            _stateController.text=location.state??'';
+                            _countryController.text=location.country??'';
+                            _pincodeController.text=location.pincode??'';
+                            _latController.text=location.latitude.toStringAsFixed(4);
+                            _lngController.text=location.longitude.toStringAsFixed(4);
+                          });
+                        }
+
+
+                        // customLoadingIndicator(context: context, canPop: false);
+                        // final location =await LocationUtils.getCurrentLocation();
+                        // if(mounted){
+                        //   Navigator.pop(context);
+                        //   if(location!=null){
+                        //     setState(() {
+                        //       _addrLineController.text=(location.name??'') +', '+ (location.sublocality??'');
+                        //       _cityController.text=location.city??'';
+                        //       _stateController.text=location.state??'';
+                        //       _countryController.text=location.country??'';
+                        //       _pincodeController.text=location.pincode??'';
+                        //       _latController.text=location.latitude.toStringAsFixed(4);
+                        //       _lngController.text=location.longitude.toStringAsFixed(4);
+                        //     });
+                        //   }
+                        // }
+
+                      },
+                      child: const Text(
+                        "Select Location",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          color: Themes.colorSecondary
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12,),
+                CustomTextField(
+                  controller: _addrLineController,
+                  hintText: " Address Line*",
+                  validator: TextValidator.requiredText,
+                  keyboardType: TextInputType.streetAddress,
+                ),
+                const SizedBox(height: 18,),
+                CustomTextField(
+                  controller: _cityController,
+                  hintText: " City*",
+                  validator: TextValidator.requiredText,
+                ),
+                const SizedBox(height: 18,),
+                CustomTextField(
+                  controller: _stateController,
+                  hintText: " State",
+                ),
+                const SizedBox(height: 18,),
+                CustomTextField(
+                  controller: _countryController,
+                  hintText: " Country*",
+                  validator: TextValidator.requiredText,
+                ),
+                const SizedBox(height: 18,),
+                CustomTextField(
+                  controller: _pincodeController,
+                  hintText: " Pincode*",
+                  validator: TextValidator.requiredText,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                ),
+                const SizedBox(height: 18,),
+                CustomTextField(
+                  controller: _latController,
+                  hintText: " Latitude*",
+                  validator: TextValidator.requiredText,
+                  keyboardType: TextInputType.number,
+                
+                ),
+                const SizedBox(height: 18,),
+                CustomTextField(
+                  controller: _lngController,
+                  hintText: " Longitude*",
+                  validator: TextValidator.requiredText,
+                  keyboardType: TextInputType.number,
+                
+                ),
+              ],
+            ),
+
+
+
+
+
+
+
             const SizedBox(height: 18,),
             CustomTextField(
               controller: _petDescriptionController,
               hintText: " Description",
-              maxLines: 7,
+              maxLines: 5,
               maxLength: 250,
             ),
 
@@ -243,18 +407,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                           _petImages.add(imgFile);
                           setState(() {});
                         }
-                        // FileUtils.pickImageFromGallery().then((pickedImage){
-                        //   if(pickedImage==null) return;
-                        //   final File img = File(pickedImage.path);
-                        //   double fileSize = FileUtils.fileSizeKB(img);
-                        //   log("File : ${pickedImage.path} size $fileSize KB");
-                        //   if (fileSize <= 2048) {
-                        //   } else {
-                        //     CustomSnackbar.message(
-                        //       msg: "Image size can't be greater than 2Mb."
-                        //     );
-                        //   }
-                        // });
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),

@@ -1,9 +1,13 @@
 import 'dart:developer';
 
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/pet.dart';
+import 'package:adopt_us/models/user.dart';
+import 'package:adopt_us/screens/request/specific_pet_requests_screen.dart';
+import 'package:adopt_us/utils/app_navigator.dart';
 import 'package:adopt_us/widgets/custom_carousel.dart';
 import 'package:adopt_us/widgets/custom_elevated_button.dart';
 import 'package:adopt_us/widgets/custom_loading_indicator.dart';
@@ -17,6 +21,7 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
   SurrendedPetDetailsScreen({ Key? key, required this.pet}) : super(key: key);
 
   final _requestController = Get.put(RequestController());
+  final _petController =  Get.put(PetController());
   final _userController = Get.put(UserController());
   
   @override
@@ -24,6 +29,26 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            Obx((){
+              bool isFavorite = _userController.user?.getFavPetIds?.contains(pet.petId)==true;
+              return GestureDetector(
+                onTap: (){
+                  _petController.toggleFavoritePet(pet.petId);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_outline_outlined,
+                    color: Colors.redAccent,
+                    size: 34,
+                  ),
+                ),
+              );
+            }),
+          ],
         ),
         extendBodyBehindAppBar: true,
         body: Column(
@@ -121,8 +146,6 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
                           color: Themes.colorBlack.withOpacity(0.8),
                         ),
                       ),
-
-
                     ],
                   ),
                 ),
@@ -137,21 +160,18 @@ class SurrendedPetDetailsScreen extends StatelessWidget {
             if(pet.user?.userId == _userController.user?.userId){
               return CustomElevatedButton(
                 onPressed: ()async{
-                  // customLoadingIndicator(context: context,canPop: false);
-                  // bool res =await  _requestController.sendAdoptRequest(pet.petId.toString());
-                  // Navigator.pop(context);
-                  // if(res){
-                  //   CustomSnackbar.message(msg: "Request sent");
-                  // }
+                  _requestController.fetchSpecificPetRequests(pet.petId);
+                  AppNavigator.push(
+                    context, 
+                    SpecificPetRequestsScreen(pet: pet)
+                  );
                 },
                 text: "Show Requests",
               );
             }
             if(_requestController.isRequested(pet.petId)){
-              return  CustomElevatedButton(
-                onPressed: ()async{
-                  
-                },
+              return  const  CustomElevatedButton(
+                onPressed: null,
                 text: "Already Requested",
               );
             }

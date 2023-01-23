@@ -1,11 +1,14 @@
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
+import 'package:adopt_us/models/user.dart';
 import 'package:adopt_us/screens/auth/sign_in_screen.dart';
-import 'package:adopt_us/screens/requests_screen.dart';
+import 'package:adopt_us/screens/pet/favorite_pets_screen.dart';
+import 'package:adopt_us/screens/request/all_requests_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/utils/app_navigator.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:adopt_us/widgets/cached_image_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,10 +26,26 @@ class AppDrawer extends StatelessWidget {
         child: Obx((){
           return ListView(
             children: [
-              const SizedBox(height: 100,),
-              _DrawerTile(
+              const SizedBox(height: 30,),
+              GestureDetector(
                 onTap: (){
                   Navigator.pop(context);
+                  if(_userController.isSignedIn){
+                    return;
+                  }
+                  AppNavigator.push(context, const SignInScreen());
+                },  
+                child: Container(
+                  color: Colors.transparent,
+                  child: drawerHeader(_userController.user))
+              ),
+              const SizedBox(height: 30,),
+              const Divider(thickness: 2,),
+              _DrawerTile(
+                onTap: ()async{
+                  Navigator.pop(context);
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  _bottomNavController.changeRoute(index: 0);
                 }, 
                 icon: CupertinoIcons.home, 
                 title: "Home",
@@ -34,40 +53,34 @@ class AppDrawer extends StatelessWidget {
               ),
               _DrawerTile(
                 onTap: (){
-                  
+                  Navigator.pop(context);
+                  AppNavigator.push(context, FavoritePetsScreen());
                 }, 
                 icon: Icons.favorite_border_outlined, 
                 title: "Favorites",
                 isSelected: false,
               ),
               _DrawerTile(
-                onTap: (){
-                  _bottomNavController.changeRoute(index: 1);
+                onTap: ()async{
                   Navigator.pop(context);
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  _bottomNavController.changeRoute(index: 1);
                 }, 
                 icon: CupertinoIcons.search,
-                title: "Find Pet",
+                title: "Missing Pets",
                 isSelected: _bottomNavController.currentIndex==1,
               ),
               _DrawerTile(
                 onTap: (){
                   Navigator.pop(context);
-                  AppNavigator.push(context, const RequestsScreen());
+                  AppNavigator.push(context, const AllRequestsScreen());
                 }, 
                 icon: Icons.pets,
                 title: "Requests",
               ),
               const Divider(thickness: 2,),
-              !_userController.isSignedIn
-              ? _DrawerTile(
-                  onTap: ()async{
-                    Navigator.pop(context);
-                    AppNavigator.push(context, const SignInScreen());
-                  }, 
-                  icon: Icons.login,
-                  title: "Sign In",
-                )
-              : _DrawerTile(
+              if(_userController.isSignedIn)
+               _DrawerTile(
                   onTap: ()async{
                     _userController.logOut();
                     AppNavigator.pushAndRemoveUntil(context, const SplashScreen());
@@ -75,6 +88,7 @@ class AppDrawer extends StatelessWidget {
                   icon: Icons.logout,
                   title: "Sign Out",
                 ),
+             
               _DrawerTile(
                 onTap: (){
                   Navigator.pop(context);
@@ -93,6 +107,41 @@ class AppDrawer extends StatelessWidget {
         })
         
       ),
+    );
+  }
+
+
+  Widget drawerHeader(User? user){
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(width: 12,),
+        //Profile Pic
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: CachedImageContainer(
+            imgUrl: user?.profilePic??Constants.defaultPic,
+            height: 60,
+            width: 60,
+            borderRadius: BorderRadius.circular(100),
+          )
+        ),
+        const SizedBox(width: 12,),
+        Flexible(
+          child: Text(
+            user!=null
+            ? "Hello ${user.fullName}"
+            : "Sign In",
+            style: const TextStyle(
+              fontSize: 24
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8,),
+      
+      ],
     );
   }
 }

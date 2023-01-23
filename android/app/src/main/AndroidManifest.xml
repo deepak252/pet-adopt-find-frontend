@@ -52,6 +52,12 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        
+        <!-- <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBk7fcJxKbBe_EoyCYnFODDuykojXnuc3Y"/> -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyB14oZ3M9HW-pYKIsIwCfyYhFKsg3FX6v0"/>
+               
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

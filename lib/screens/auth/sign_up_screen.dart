@@ -1,4 +1,8 @@
 import 'package:adopt_us/config/app_theme.dart';
+import 'package:adopt_us/controllers/bottom_nav_controller.dart';
+import 'package:adopt_us/controllers/chat_controller.dart';
+import 'package:adopt_us/controllers/pet_controller.dart';
+import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/splash_screen.dart';
 import 'package:adopt_us/services/auth_service.dart';
@@ -28,6 +32,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _cfPasswordController = TextEditingController();
+
+  final _passwordVisibilityNotifier = ValueNotifier<bool>(false);
+  final _cfPasswordVisibilityNotifier = ValueNotifier<bool>(false);  //for confirm password
 
   @override
   void dispose() {
@@ -81,18 +88,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _passwordController,
-                    hintText: " Password",
-                    validator: TextValidator.validatePassword,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _passwordVisibilityNotifier,
+                    builder: (context,_passwordVisible, child) {
+                      return CustomTextField(
+                        controller: _passwordController,
+                        hintText: " Password",
+                        obscureText: !_passwordVisible,
+                        suffixIcon: passwordVisibilityIcon(_passwordVisibilityNotifier),
+                        validator: TextValidator.validatePassword,
+                      );
+                    }
                   ),
                   const SizedBox(height: 18,),
-                  CustomTextField(
-                    controller: _cfPasswordController,
-                    hintText: " Confirm Password",
-                    validator: (confirmPassword)=> TextValidator.validateConfirmPassword(
-                      confirmPassword, _passwordController.text
-                    ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _cfPasswordVisibilityNotifier,
+                    builder: (context,_cfPasswordVisible, child) {
+                      return CustomTextField(
+                        controller: _cfPasswordController,
+                        hintText: " Confirm Password",
+                        obscureText: !_cfPasswordVisible,
+                        suffixIcon: passwordVisibilityIcon(_cfPasswordVisibilityNotifier),
+                        validator: (confirmPassword)=> TextValidator.validateConfirmPassword(
+                          confirmPassword, _passwordController.text
+                        ),
+                      );
+                    }
                   ),
                   
                   const SizedBox(height: 36,),
@@ -115,6 +136,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         //Sign Up Successfull
                         CustomSnackbar.success(msg: "Account Created Successfully");
                         await Get.delete<UserController>();
+                        await Get.delete<BottomNavController>();
+                        await Get.delete<ChatController>();
+                        await Get.delete<PetController>();
+                        await Get.delete<RequestController>();
                         await UserPrefs.setToken(value: token);
                         if(mounted){
                           AppNavigator.pushAndRemoveUntil(context, const SplashScreen());
@@ -149,6 +174,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  IconButton  passwordVisibilityIcon(ValueNotifier<bool> _visibilityNotifier){
+    return IconButton(
+      icon: Icon(
+        // Based on passwordVisible state choose the icon
+        _visibilityNotifier.value ? Icons.visibility : Icons.visibility_off,
+        color: Themes.colorSecondary,
+        size: 23,
+      ),
+      onPressed: () {
+        _visibilityNotifier.value = !_visibilityNotifier.value;
+      },
+      padding: const EdgeInsets.only(right: 8),
     );
   }
 }
