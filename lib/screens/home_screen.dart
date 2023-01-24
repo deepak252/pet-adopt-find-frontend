@@ -1,4 +1,5 @@
 
+import 'package:adopt_us/controllers/chat_controller.dart';
 import 'package:adopt_us/controllers/pet_controller.dart';
 import 'package:adopt_us/controllers/request_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
@@ -27,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
   final _userController = Get.put(UserController());
 
   final _requestController = Get.put(RequestController());
+  final _chatController = Get.put(ChatController());
+  
   @override
   void initState() {
     super.initState();
