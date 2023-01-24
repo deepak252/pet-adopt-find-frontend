@@ -1,6 +1,7 @@
 abstract class ApiPath{
 
-  static const String baseUrl = "http://192.168.43.138:8000";
+  static const String baseUrl = "http://192.168.218.59:8000"; //satyam
+  // static const String baseUrl = "http://192.168.43.138:8000"; 
   // static const String baseUrl = "https://adopt-us-backend.vercel.app";
   // static const String baseUrl = "https://adoptus.onrender.com";
   //Auth
