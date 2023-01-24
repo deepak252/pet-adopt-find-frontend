@@ -3,7 +3,9 @@ import 'package:adopt_us/config/constants.dart';
 import 'package:adopt_us/controllers/bottom_nav_controller.dart';
 import 'package:adopt_us/controllers/user_controller.dart';
 import 'package:adopt_us/models/user.dart';
+import 'package:adopt_us/screens/about_us_screen.dart';
 import 'package:adopt_us/screens/auth/sign_in_screen.dart';
+import 'package:adopt_us/screens/help_and_support_screen.dart';
 import 'package:adopt_us/screens/pet/favorite_pets_screen.dart';
 import 'package:adopt_us/screens/request/all_requests_screen.dart';
 import 'package:adopt_us/splash_screen.dart';
@@ -92,12 +94,16 @@ class AppDrawer extends StatelessWidget {
               _DrawerTile(
                 onTap: (){
                   Navigator.pop(context);
+                  AppNavigator.push(context, const AboutUsScreen());
                 }, 
                 icon: Icons.info_outlined,
                 title: "About Us",
               ),
               _DrawerTile(
-                onTap: (){}, 
+                onTap: (){
+                  Navigator.pop(context);
+                  AppNavigator.push(context, const HelpSupportScreen());
+                }, 
                 icon: Icons.support_agent_outlined,
                 title: "Help & Support",
               ),
