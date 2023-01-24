@@ -307,7 +307,7 @@ class _AllRequestsScreenState extends State<AllRequestsScreen> {
               ],
             ),      
           ),
-          if(request.isAccepted)
+          if(!request.isRejected)
             Positioned(
               right: 2,
               child: FloatingActionButton(
